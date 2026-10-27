@@ -9,5 +9,5 @@ description: Use when designing or changing a web application — an HTTP API ba
 
 | 다루는 것 | 기준 |
 |---|---|
-| HTTP API를 내는 백엔드의 영역 나누기, 경로, 영역 사이 관계 | `criteria/web-api.md` |
+| HTTP API를 내는 백엔드의 영역 나누기, 경로, 영역 안과 사이, 입력·오류, 목록, 쓰기, 권한·식별자 | `criteria/web-api.md` |
 | 브라우저에서 도는 웹 앱에서 무엇을 어디에 두고 데이터를 어떻게 다룰지 | `criteria/web-frontend.md` |
