@@ -21,11 +21,13 @@ HTTP API를 내는 백엔드에서 영역을 어떻게 나누고, 영역 안과 
 
 ## 영역 안
 
-- 저장소(repository) 층을 따로 두지 않는다. 업무 코드가 ORM을 바로 부르고, ORM 클라이언트는 바탕에 하나만 만들어 함께 쓴다. 외부 서비스 클라이언트(파일 저장소, 메일)도 같다.
-- 경로를 받는 코드는 API 이름과 DB 이름을 맞바꾸고 응답을 조립한다. 업무 코드는 DB 이름으로 일한다. 저장 방식이 만든 타입을 계약으로 쓰지 않는 것은 `qef:dev`의 `criteria/structure.md` "계약의 주인"대로다.
+- 규칙(판정, 검증, 상태 전이)은 도메인 타입을 받고 돌려준다. ORM을 부르지 않고, ORM이 만든 타입을 받지 않는다(`qef:dev`의 `criteria/structure.md` "계약의 주인").
+- DB를 읽고 쓰는 일은 aggregate마다 저장소(repository) 하나가 맡고, ORM 결과를 도메인 타입으로 바꿔 돌려준다. 여러 저장소가 같은 방식으로 하는 접근은 `qef:dev`의 `criteria/review-lenses.md` 판정 규칙대로 바탕의 제네릭 함수로 묶는다. 정형화되지 않은 쿼리는 그 저장소 안에 쓴다.
+- 요청을 처리하는 코드가 저장소 → 규칙 → 저장소 순서로 잇는다. 경로를 받는 코드는 API 모양과 도메인 타입을 맞바꾸고 응답을 조립한다.
+- ORM 클라이언트와 외부 서비스 클라이언트(파일 저장소, 메일)는 바탕에 하나만 만들어 함께 쓴다.
 - 오래 걸리는 작업(외부 학습, 생성, OCR)은 경로 코드 밖에서 돈다. 요청에는 작업 자원을 만들어 바로 답한다(아래 "쓰기").
 
-근거: Microsoft Learn, "Designing the infrastructure persistence layer" (https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design); Prisma, "Database connections" (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections); Martin Fowler, "Data Transfer Object" (https://martinfowler.com/eaaCatalog/dataTransferObject.html); Google AIP-151, "Long-running operations" (https://google.aip.dev/151).
+근거: Microsoft Learn, "Designing the infrastructure persistence layer", "Define one repository per aggregate" 절 (https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design); Martin Fowler, "Repository" (https://martinfowler.com/eaaCatalog/repository.html); Sandi Metz, "The Wrong Abstraction" (https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction); Prisma, "Database connections" (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections); Martin Fowler, "Data Transfer Object" (https://martinfowler.com/eaaCatalog/dataTransferObject.html); Google AIP-151, "Long-running operations" (https://google.aip.dev/151). 다른 점: Microsoft 글은 갱신은 저장소로만 하되, 읽기는 저장소 밖 쿼리로 해도 된다고 한다(CQRS). 여기서는 읽기도 그 aggregate의 저장소에 둔다.
 
 ## 입력과 오류
 
