@@ -1,6 +1,6 @@
 # 점검 관점
 
-단위를 끝낼 때와 마무리 때 스스로 점검한다. 구호 대신 관찰 가능한 신호와 판정 규칙으로 본다. 근거: Google eng-practices 리뷰 가이드, refactoring.guru 코드 스멜, Ousterhout『A Philosophy of Software Design』.
+단위를 끝낼 때와 마무리 때 스스로 점검한다. 구호 대신 관찰 가능한 신호와 판정 규칙으로 본다. 근거: Google eng-practices 리뷰 가이드, refactoring.guru 코드 스멜, Ousterhout『A Philosophy of Software Design』, Sandi Metz "The Wrong Abstraction" (https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction).
 
 걸린 것은 그 단위 안에서 고친다. 고치지 않고 넘어가는 것은 판단 기록에 이유와 함께 적는다. 기준에 걸린 것을 기준을 좁혀 피하지 않는다: 외부 동작을 지키며 통과하는 안이 하나라도 있으면 그 안으로 고친다.
 
@@ -36,7 +36,7 @@
 
 판정 규칙:
 - "이런 변경·사용이 오면 이런 이유로 문제가 된다"는 구체적 시나리오가 있어야 문제로 본다. "더 깔끔해 보인다"는 근거가 아니다.
-- 모양만 비슷한 코드 중복은 세 번째에 추상화한다. 같은 지식의 중복은 두 번째부터 고친다.
+- 모양이 같은 코드가 세 번째 나오면 공통으로 뺄지 판단한다. 세 곳이 같은 이유로 바뀌는지 보고, 그렇지 않으면 그대로 둔다. 모양만 같은 것을 억지로 묶은 잘못된 추상화는 중복보다 비싸다. 같은 지식(포맷, 검증 규칙, 상수의 뜻)의 중복은 두 번째부터 고친다.
 
 ## 정확성
 

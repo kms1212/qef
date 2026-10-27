@@ -37,7 +37,7 @@
 ## 모양
 
 - 색, 간격, 글꼴 같은 값은 이름 붙은 값(디자인 토큰)으로만 쓴다. 값을 직접 쓰면 바꿀 때 모든 곳을 찾아다녀야 한다.
-- 같은 모양의 부품이 세 번째 나오면 공통 부품으로 뺀다(`qef:dev`의 `criteria/review-lenses.md` 단순성 판정 규칙).
+- 같은 모양의 부품을 공통으로 뺄지는 `qef:dev`의 `criteria/review-lenses.md` 단순성 판정 규칙대로 판단한다.
 
 근거: Design Tokens Community Group, "Design Tokens Format Module" (https://www.designtokens.org/tr/drafts/format/); Atlassian Design System, "Design tokens" (https://atlassian.design/foundations/tokens/design-tokens).
 
