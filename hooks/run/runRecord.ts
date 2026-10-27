@@ -1,14 +1,11 @@
 import type { EngineInterface as Api } from 'claude-code'
 
 import type { Run, RunEvent } from '../../types'
-import { requiredFiles } from './requiredFiles'
 
-// 실행 기록은 mod가 직접 만들고 남긴다. 관찰하는 세션 없이도 진행과 어긋남을 실행 폴더만 보고 알 수 있게 하기 위해서다.
+// 실행 기록은 mod가 직접 만들고 남긴다. 관찰하는 세션 없이도 시작과 끝, 끝에 보고한 판단을 실행 폴더만 보고 알 수 있게 하기 위해서다.
 
 export const EVENTS_FILE = 'events.jsonl'
-
-/** 파일 시각과 mod 시계가 조금 어긋나도 "이 단계에서 썼다"로 본다 */
-const CLOCK_SLACK_MS = 2000
+export const LEDGER_FILE = 'ledger.md'
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -27,34 +24,15 @@ export async function createRunDir($: Api, root: string, at: number): Promise<{ 
   return { dir }
 }
 
-/** events.jsonl에 한 줄을 붙인다. 실행 폴더가 없는 이전 버전 상태면 건너뛴다. */
-export async function appendEvent($: Api, run: Run | null, event: RunEvent): Promise<void> {
-  if (!run?.runDir) return
+/** events.jsonl에 한 줄을 붙인다 */
+export async function appendEvent($: Api, run: Run, event: RunEvent): Promise<void> {
   const path = `${run.runDir}/${EVENTS_FILE}`
   const before = (await $.fs.exists(path)) ? await $.fs.read(path) : ''
   await $.fs.write(path, `${before}${JSON.stringify(event)}\n`)
 }
 
-/** 현재 단계에 들어간 시각 */
-export const stageEnteredAt = (run: Run): number => run.stageLog?.[run.stageLog.length - 1]?.at ?? 0
-
-function patternRegex(name: string): RegExp {
-  const escaped = name.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replaceAll('*', '.*')
-  return new RegExp(`^${escaped}$`)
-}
-
-/** 이 단계의 필수 파일 중 이 단계에서 쓰인 것이 모자란 패턴. 실행 폴더가 없는 이전 버전 상태면 빈 목록이다. */
-export async function missingFiles($: Api, run: Run, stage: string): Promise<string[]> {
-  if (!run.runDir) return []
-  const since = stageEnteredAt(run) - CLOCK_SLACK_MS
-  const missing: string[] = []
-  for (const req of requiredFiles(run, stage)) {
-    const slash = req.pattern.lastIndexOf('/')
-    const dir = slash < 0 ? run.runDir : `${run.runDir}/${req.pattern.slice(0, slash)}`
-    const name = patternRegex(req.pattern.slice(slash + 1))
-    const entries = (await $.fs.exists(dir)) ? await $.fs.list(dir) : []
-    const fresh = entries.filter((e) => e.kind === 'file' && name.test(e.name) && e.mtimeMs >= since)
-    if (fresh.length < req.min) missing.push(req.min > 1 ? `${req.pattern} (${req.min}개 이상)` : req.pattern)
-  }
-  return missing
+/** 실행 폴더의 할 일 목록. 아직 없으면 null */
+export async function readLedger($: Api, run: Run): Promise<string | null> {
+  const path = `${run.runDir}/${LEDGER_FILE}`
+  return (await $.fs.exists(path)) ? await $.fs.read(path) : null
 }
