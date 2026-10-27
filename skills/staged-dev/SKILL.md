@@ -76,7 +76,7 @@ description: Use when any request would change code — feature, bugfix, refacto
 `ledger.md`의 다음 단위를 하나씩 끝낸다.
 
 1. 이 단위의 아래층을 정한다: 만들고 옮길 파일과 각 파일이 하는 일. `structure.md`의 파일 규칙을 따른다.
-2. 바꾼다. 동작을 고정할 시험이 없는 곳이면 `verification.md`대로 먼저 고정한다.
+2. 바꾼다.
 3. 검증 칸의 명령을 돌린다. 기준선보다 나빠진 것이 없어야 한다.
 4. `review-lenses.md`로 스스로 점검하고, 걸린 것을 이 단위 안에서 고친다.
 5. 커밋하고 상태를 "끝"으로 바꾼다.
