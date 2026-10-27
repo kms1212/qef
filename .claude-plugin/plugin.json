@@ -1,0 +1,10 @@
+{
+  "name": "qef",
+  "displayName": "QEF",
+  "version": "0.2.0",
+  "description": "Quod erat faciendum: 코드 변경을 요구사항 → 설계 → 테스트·구현 → 검토 → 통합 단계로만 진행하게 하고, 체크포인트는 사용자가 직접 승인한다.",
+  "author": {
+    "name": "kms1212"
+  },
+  "types": "./types/index.d.ts"
+}
