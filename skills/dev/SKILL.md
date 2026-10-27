@@ -1,9 +1,9 @@
 ---
-name: staged-dev
+name: dev
 description: Use when any request would change code — feature, bugfix, refactor, config in code, of any size — before editing any file or delegating edits to a subagent. 코드 변경이 들어가는 모든 개발 작업.
 ---
 
-# staged-dev
+# dev
 
 ## 원칙
 
@@ -13,7 +13,7 @@ description: Use when any request would change code — feature, bugfix, refacto
 - **아래층은 그 부분을 맡을 때 정한다.** 이미 만든 것을 보고 다음 부분을 정한다.
 - **어느 정도의 오류는 감수한다.** 아래층에서 생긴 문제는 그 자리에서 고친다. 그것 때문에 위층을 다시 열지 않는다. 위층을 다시 여는 것은 위층 결정이 성립 조건을 통과하지 못한다는 것이 드러났을 때뿐이다.
 - **멈추지 않는다.** 사람을 부르는 것은 아래 "사람을 부르는 경우"뿐이다. 그 밖의 판단은 기준으로 정하고, 기록하고, 계속한다. 기록은 끝에 한 번 모아 보인다.
-- **기준은 `criteria/`에 있다.** 구조는 `structure.md`, 동작 확인은 `verification.md`, 점검은 `review-lenses.md`, 재사용은 `reuse.md`를 따른다. HTTP API를 내는 백엔드를 다루면 `web-api.md`도 따른다.
+- **기준은 `criteria/`에 있다.** 구조는 `structure.md`, 동작 확인은 `verification.md`, 점검은 `review-lenses.md`, 재사용은 `reuse.md`를 따른다. 웹 프로젝트(HTTP API 백엔드, 웹 프론트엔드)면 `qef:web` 스킬의 기준도 따른다.
 - **사용자에게 하는 말은 사용자가 쓴 언어로 쓴다.** 도구 결과, 알림, 하위 에이전트 보고가 다른 언어여도 바꾸지 않는다.
 
 ## 시작
