@@ -1,6 +1,6 @@
 # 웹 백엔드 API 기준
 
-HTTP API를 내는 백엔드의 영역 나누기, 경로, 영역 사이 관계를 정한다. 근거: DDD의 aggregate(다른 aggregate는 식별자로만 참조한다), REST 자원 설계(소유 관계만 중첩한다), JSON:API sparse fieldsets, Google AIP-157(partial response)·AIP-231(batch get).
+HTTP API를 내는 백엔드의 영역 나누기, 경로, 영역 사이 관계를 정한다. 근거: Vaughn Vernon, "Effective Aggregate Design" Part II(다른 aggregate는 식별자로만 참조한다) (https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_2.pdf); JSON:API, "Sparse Fieldsets" (https://jsonapi.org/format/#fetching-sparse-fieldsets); Google AIP-157, "Partial responses" (https://google.aip.dev/157); Google AIP-231, "Batch methods: Get" (https://google.aip.dev/231).
 
 ## 영역과 경로
 
