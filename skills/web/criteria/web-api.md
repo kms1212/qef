@@ -1,25 +1,28 @@
 # 웹 백엔드 API 기준
 
-HTTP API를 내는 백엔드에서 영역을 어떻게 나누고, 영역 안과 영역 사이를 어떻게 짜고, 요청과 응답을 어떤 모양으로 낼지 판단하는 기준이다. 어떤 프레임워크와 라이브러리를 쓸지는 정하지 않는다. 같은 문제를 푸는 표준이 있으면 그것을 쓴다(`qef:dev`의 `criteria/reuse.md`).
+HTTP API를 내는 백엔드에서 경로와 도메인을 어떻게 나누고, 도메인 안과 도메인 사이를 어떻게 짜고, 요청과 응답을 어떤 모양으로 낼지 판단하는 기준이다. 어떤 프레임워크와 라이브러리를 쓸지는 정하지 않는다. 같은 문제를 푸는 표준이 있으면 그것을 쓴다(`qef:dev`의 `criteria/reuse.md`).
 
-## 영역과 경로
+## 경로와 도메인
 
-- API의 첫 경로 조각 하나가 도메인 영역 하나다. 영역마다 모듈 하나를 두고, 모듈 이름은 경로와 같다.
-- 부모 없이 존재할 수 없는 자원은 부모 경로 안에 둔다. 예: `/files/:fileId/versions/:versionId`. 코드에서도 그 영역 안의 하위 모듈이다.
-- 그 밖의 관계는 아이디로만 가리킨다. 예: `/files?projectId=…`.
-- 경로가 정하는 것은 영역과 중첩 자원의 모듈까지다. 영역 안의 그 밖의 배치는 `qef:dev` 스킬의 `criteria/structure.md` 파일·디렉터리 규칙대로 한다. 영역 안을 정리해도 경로는 바뀌지 않는다.
+API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 자원 규칙으로, 도메인은 함께 바뀌는 것으로 정하고, 둘은 루트 컬렉션에서만 만난다.
 
-근거: Vaughn Vernon, "Effective Aggregate Design" Part II (https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_2.pdf); Google AIP-122, "Resource names" (https://google.aip.dev/122).
+- 경로의 `/`는 "자원이 자식을 가진다" 하나만 뜻한다. 첫 조각은 루트 컬렉션이고, 자식은 그것이 무엇인지로 부른다. 관계를 뜻하는 이름(`memberships`, `assignments`)이나 도메인을 묶는 조각을 경로에 넣지 않는다.
+- 부모 없이 존재할 수 없는 자원은 부모 경로 안에 둔다. 예: `/files/:fileId/versions/:versionId`. 그 밖의 관계는 아이디로만 가리킨다. 예: `/files?projectId=…`.
+- 백엔드 도메인(패키지, DB 스키마, 화면 묶음)은 늘 함께 바뀌는 루트 컬렉션끼리 묶는다(`qef:dev`의 `criteria/structure.md` "함께 바뀜").
+- 루트 컬렉션마다 주인 도메인은 하나다. 그 자원의 쓰기와 규칙은 주인 도메인만 갖는다.
+- 백엔드 코드는 `도메인/루트 컬렉션/자식/`으로 둔다. 도메인에 루트 컬렉션이 하나뿐이어도 두 단을 지킨다. 경로 처리 모듈은 루트 컬렉션마다 하나이고, 주인 도메인을 불러 API 모양과 도메인 타입을 맞바꾼다. 그 아래의 배치는 `criteria/structure.md` 파일·디렉터리 규칙대로 한다.
 
-## 영역 사이
+근거: Google AIP-121, "Resource-oriented design"(API는 DB 스키마를 비추지 않는다) (https://google.aip.dev/121); Google AIP-122, "Resource names" (https://google.aip.dev/122); Microsoft Azure Architecture Center, "Web API design best practices"(DB 내부 구조를 비추는 API를 피한다) (https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design); Vaughn Vernon, "Effective Aggregate Design" Part II (https://www.dddcommunity.org/wp-content/uploads/files/pdf_articles/Vernon_2011_2.pdf). 다른 점: Microsoft 글은 collection/item/collection보다 깊은 경로를 피하라고 하지만, 여기서는 부모 없이 존재할 수 없으면 깊어도 부모 안에 둔다.
 
-- 영역은 같은 층의 다른 영역 코드를 가져다 쓰지 않고, 다른 영역의 표를 직접 읽거나 쓰지 않는다. 영역들이 함께 쓰는 바탕(DB 클라이언트, 인증 확인 등)은 영역 아래 층에 두고, 바탕은 영역을 모른다.
-- 다른 영역의 정보가 필요하면 응답에는 아이디만 넣고, 쓰는 쪽(웹, MCP 등)이 그 영역에서 가져온다. 이를 위해 영역마다 여러 기록을 한 번에 가져오는 요청과, 받을 필드를 고르는 `fields` 파라미터를 둔다.
-- 한 동작이 여러 영역을 함께 바꿔야 할 것 같으면 설계를 다시 본다. 미리 만들지 않거나(필요할 때 아이디로 가리킨다), 쓰는 때에 확인하거나(상태를 퍼뜨리지 않고 읽을 때 판단한다), 늘 함께 바뀌는 것이면 `qef:dev` 스킬의 `criteria/structure.md` "함께 바뀜"대로 한 영역으로 합친다.
+## 도메인 사이
+
+- 도메인은 같은 층의 다른 도메인 코드를 가져다 쓰지 않고, 다른 도메인의 표를 직접 읽거나 쓰지 않는다. 같은 도메인 안의 루트 컬렉션끼리는 코드를 함께 쓴다. 도메인들이 함께 쓰는 바탕(DB 클라이언트, 인증 확인 등)은 도메인 아래 층에 두고, 바탕은 도메인을 모른다.
+- 다른 도메인의 정보가 필요하면 응답에는 아이디만 넣고, 쓰는 쪽(웹, MCP 등)이 그 루트 컬렉션에서 가져온다. 이를 위해 루트 컬렉션마다 여러 기록을 한 번에 가져오는 요청과, 받을 필드를 고르는 `fields` 파라미터를 둔다.
+- 한 동작이 여러 도메인을 함께 바꿔야 할 것 같으면 설계를 다시 본다. 미리 만들지 않거나(필요할 때 아이디로 가리킨다), 쓰는 때에 확인하거나(상태를 퍼뜨리지 않고 읽을 때 판단한다), 늘 함께 바뀌는 것이면 `criteria/structure.md` "함께 바뀜"대로 한 도메인으로 합친다.
 
 근거: Vaughn Vernon, "Effective Aggregate Design" Part II (위); Chris Richardson, "Pattern: Database per service" (https://microservices.io/patterns/data/database-per-service.html); JSON:API, "Sparse Fieldsets" (https://jsonapi.org/format/#fetching-sparse-fieldsets); Google AIP-157, "Partial responses" (https://google.aip.dev/157); Google AIP-231, "Batch methods: Get" (https://google.aip.dev/231).
 
-## 영역 안
+## 도메인 안
 
 - 규칙(판정, 검증, 상태 전이)은 도메인 타입을 받고 돌려준다. ORM을 부르지 않고, ORM이 만든 타입을 받지 않는다(`qef:dev`의 `criteria/structure.md` "계약의 주인").
 - DB를 읽고 쓰는 일은 aggregate마다 저장소(repository) 하나가 맡고, ORM 결과를 도메인 타입으로 바꿔 돌려준다. 여러 저장소가 같은 방식으로 하는 접근은 `qef:dev`의 `criteria/review-lenses.md` 판정 규칙대로 바탕의 제네릭 함수로 묶는다. 정형화되지 않은 쿼리는 그 저장소 안에 쓴다.
@@ -67,7 +70,7 @@ HTTP API를 내는 백엔드에서 영역을 어떻게 나누고, 영역 안과 
 - 오래 걸리는 작업은 작업 자원을 만들고 202와 그 작업의 `Location`으로 답한다. 작업 자원에 상태를 둔다.
 - GET은 아무것도 바꾸지 않는다. 쓰기 값은 쿼리 문자열이 아니라 본문으로 받는다.
 - 상태는 enum으로 두고, 허용하는 전이는 한 곳에서 정한다.
-- 한 영역 안의 여러 쓰기와, 배열로 여러 개를 만드는 요청은 트랜잭션 하나로 묶는다.
+- 한 도메인 안의 여러 쓰기와, 배열로 여러 개를 만드는 요청은 트랜잭션 하나로 묶는다.
 - 여럿이 함께 고칠 수 있는 자원은 ETag를 준다. `If-Match`가 오면 지키고, 다르면 412로 답한다.
 
 근거: RFC 9110, 9.2절(안전한 메서드와 멱등 메서드), 15.3절, 13.1.1절 (https://www.rfc-editor.org/rfc/rfc9110); RFC 5789 (https://www.rfc-editor.org/rfc/rfc5789); RFC 7396 (https://www.rfc-editor.org/rfc/rfc7396); Google AIP-133 (https://google.aip.dev/133), AIP-134 (https://google.aip.dev/134), AIP-135 (https://google.aip.dev/135), AIP-151 (위), AIP-154 (https://google.aip.dev/154), AIP-216 (위), AIP-233 (https://google.aip.dev/233); Microsoft Azure Architecture Center, "Asynchronous Request-Reply pattern" (https://learn.microsoft.com/en-us/azure/architecture/patterns/async-request-reply); Prisma, "Transactions" (https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
@@ -83,7 +86,7 @@ HTTP API를 내는 백엔드에서 영역을 어떻게 나누고, 영역 안과 
 
 ## 공개 API
 
-외부에서 직접 부르는 공개 API가 생기면, 그 API는 내부 영역 구조와 떼어 따로 두고 버전을 붙인다. 이 문서의 경로 규칙은 자기 웹과 도구가 쓰는 API에 적용한다.
+외부에서 직접 부르는 공개 API가 생기면, 그 API는 따로 두고 버전을 붙인다. 이 문서의 경로 규칙은 자기 웹과 도구가 쓰는 API에 적용한다.
 
 ## 옛 방식에서 바꿀 것
 
@@ -92,7 +95,7 @@ HTTP API를 내는 백엔드에서 영역을 어떻게 나누고, 영역 안과 
 | 옛 방식 | 어긋난 기준 |
 |---|---|
 | 같은 응답 조립과 상위 상태 검사를 곳마다 복사 | `qef:dev`의 `criteria/review-lenses.md` 단순성 판정 규칙(같은 규칙은 두 번째부터, 같은 모양은 세 번째에 판단) |
-| 다른 영역의 표를 직접 쓰고, 트랜잭션 없이 함께 바꾸기 | 영역 사이 |
+| 다른 도메인의 표를 직접 쓰고, 트랜잭션 없이 함께 바꾸기 | 도메인 사이 |
 | 쪽 크기 상한 없음, 맨 배열 목록 | 목록 |
 | GET이 읽음 표시를 하는 등 쓰기를 함, 쓰기 값을 쿼리로 받기 | 쓰기 |
 | 반복해도 같은 결과인 설정을 POST로 | 쓰기 |
