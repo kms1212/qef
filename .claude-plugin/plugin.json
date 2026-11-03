@@ -2,7 +2,7 @@
   "name": "qef",
   "displayName": "QEF",
   "version": "0.5.0",
-  "description": "Quod erat faciendum: 코드 변경을 큰 틀 → 할 일 목록 → 단위마다 처리 순서로 진행하고, 구조 기준과 동작 확인 기준을 주며, 판단과 결과를 실행 기록에 남긴다.",
+  "description": "Quod erat faciendum: 코드 변경을 상위 설계 → 할 일 목록 → 단위마다 처리 순서로 진행하고, 구조 기준과 검증 기준을 주며, 판단과 결과를 실행 기록에 남긴다.",
   "author": {
     "name": "kms1212"
   }

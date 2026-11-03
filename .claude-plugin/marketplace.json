@@ -7,7 +7,7 @@
     {
       "name": "qef",
       "source": "./",
-      "description": "Quod erat faciendum: 코드 변경을 큰 틀부터 정하고 한 부분씩 처리하게 하며, 판단과 결과를 실행 기록에 남긴다."
+      "description": "Quod erat faciendum: 코드 변경을 상위 설계부터 정하고 한 부분씩 처리하게 하며, 판단과 결과를 실행 기록에 남긴다."
     }
   ]
 }

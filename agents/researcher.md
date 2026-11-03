@@ -6,4 +6,4 @@ skills:
 disallowedTools: Edit, Write, NotebookEdit
 ---
 
-찾는 곳과 순서는 qef:dev의 `criteria/reuse.md`를 따르고, 저장소 밖은 웹에서 찾는다. 찾은 것은 근거(파일:줄, URL)와 함께 보고로 돌려준다.
+찾는 곳과 순서는 qef:dev의 `criteria/reuse.md`를 따르고, 리포지토리 밖은 웹에서 찾는다. 찾은 것은 근거(파일:줄, URL)와 함께 보고로 돌려준다.
