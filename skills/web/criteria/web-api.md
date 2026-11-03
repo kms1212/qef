@@ -6,7 +6,7 @@ HTTP API를 내는 백엔드에서 경로와 도메인을 어떻게 나누고, �
 
 API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 자원 규칙으로, 도메인은 함께 바뀌는 것으로 정하고, 둘은 루트 컬렉션에서만 만난다.
 
-- 경로의 `/`는 "자원이 자식을 가진다" 하나만 뜻한다. 첫 조각은 루트 컬렉션이고, 자식은 그것이 무엇인지로 부른다. 관계를 뜻하는 이름(`memberships`, `assignments`)이나 도메인을 묶는 조각을 경로에 넣지 않는다.
+- 경로의 `/`는 "자원이 자식을 가진다" 하나만 뜻한다. 첫 path segment는 루트 컬렉션이고, 자식은 그것이 무엇인지로 부른다. 관계를 뜻하는 이름(`memberships`, `assignments`)이나 도메인을 묶는 path segment를 경로에 넣지 않는다.
 - 부모 없이 존재할 수 없는 자원은 부모 경로 안에 둔다. 예: `/files/:fileId/versions/:versionId`. 그 밖의 관계는 아이디로만 가리킨다. 예: `/files?projectId=…`.
 - 백엔드 도메인(패키지, DB 스키마, 화면 묶음)은 늘 함께 바뀌는 루트 컬렉션끼리 묶는다(`qef:dev`의 `criteria/structure.md` "함께 바뀜").
 - 루트 컬렉션마다 주인 도메인은 하나다. 그 자원의 쓰기와 규칙은 주인 도메인만 갖는다.
@@ -16,7 +16,7 @@ API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 자�
 
 ## 도메인 사이
 
-- 도메인은 같은 층의 다른 도메인 코드를 가져다 쓰지 않고, 다른 도메인의 표를 직접 읽거나 쓰지 않는다. 같은 도메인 안의 루트 컬렉션끼리는 코드를 함께 쓴다. 도메인들이 함께 쓰는 바탕(DB 클라이언트, 인증 확인 등)은 도메인 아래 층에 두고, 바탕은 도메인을 모른다.
+- 도메인은 같은 층의 다른 도메인 코드를 가져다 쓰지 않고, 다른 도메인의 테이블을 직접 읽거나 쓰지 않는다. 같은 도메인 안의 루트 컬렉션끼리는 코드를 함께 쓴다. 도메인들이 함께 쓰는 foundation(DB 클라이언트, 인증 확인 등)은 도메인 아래 층에 두고, foundation은 도메인을 모른다.
 - 다른 도메인의 정보가 필요하면 응답에는 아이디만 넣고, 쓰는 쪽(웹, MCP 등)이 그 루트 컬렉션에서 가져온다. 이를 위해 루트 컬렉션마다 여러 기록을 한 번에 가져오는 요청과, 받을 필드를 고르는 `fields` 파라미터를 둔다.
 - 한 동작이 여러 도메인을 함께 바꿔야 할 것 같으면 설계를 다시 본다. 미리 만들지 않거나(필요할 때 아이디로 가리킨다), 쓰는 때에 확인하거나(상태를 퍼뜨리지 않고 읽을 때 판단한다), 늘 함께 바뀌는 것이면 `criteria/structure.md` "함께 바뀜"대로 한 도메인으로 합친다.
 
@@ -24,10 +24,10 @@ API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 자�
 
 ## 도메인 안
 
-- 규칙(판정, 검증, 상태 전이)은 도메인 타입을 받고 돌려준다. ORM을 부르지 않고, ORM이 만든 타입을 받지 않는다(`qef:dev`의 `criteria/structure.md` "계약의 주인").
-- DB를 읽고 쓰는 일은 aggregate마다 저장소(repository) 하나가 맡고, ORM 결과를 도메인 타입으로 바꿔 돌려준다. 여러 저장소가 같은 방식으로 하는 접근은 `qef:dev`의 `criteria/review-lenses.md` 판정 규칙대로 바탕의 제네릭 함수로 묶는다. 정형화되지 않은 쿼리는 그 저장소 안에 쓴다.
+- 규칙(판정, 검증, 상태 전이)은 도메인 타입을 받고 돌려준다. ORM을 부르지 않고, ORM이 만든 타입을 받지 않는다(`qef:dev`의 `criteria/structure.md` "공개 타입의 주인").
+- DB를 읽고 쓰는 일은 aggregate마다 저장소(repository) 하나가 맡고, ORM 결과를 도메인 타입으로 바꿔 돌려준다. 여러 저장소가 같은 방식으로 하는 접근은 `qef:dev`의 `criteria/review-lenses.md` 판정 규칙대로 foundation의 제네릭 함수로 묶는다. 정형화되지 않은 쿼리는 그 저장소 안에 쓴다.
 - 요청을 처리하는 코드가 저장소 → 규칙 → 저장소 순서로 잇는다. 경로를 받는 코드는 API 모양과 도메인 타입을 맞바꾸고 응답을 조립한다.
-- ORM 클라이언트와 외부 서비스 클라이언트(파일 저장소, 메일)는 바탕에 하나만 만들어 함께 쓴다.
+- ORM 클라이언트와 외부 서비스 클라이언트(파일 저장소, 메일)는 foundation에 하나만 만들어 함께 쓴다.
 - 오래 걸리는 작업(외부 학습, 생성, OCR)은 경로 코드 밖에서 돈다. 요청에는 작업 자원을 만들어 바로 답한다(아래 "쓰기").
 
 근거: Microsoft Learn, "Designing the infrastructure persistence layer", "Define one repository per aggregate" 절 (https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design); Martin Fowler, "Repository" (https://martinfowler.com/eaaCatalog/repository.html); Sandi Metz, "The Wrong Abstraction" (https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction); Prisma, "Database connections" (https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/databases-connections); Martin Fowler, "Data Transfer Object" (https://martinfowler.com/eaaCatalog/dataTransferObject.html); Google AIP-151, "Long-running operations" (https://google.aip.dev/151). 다른 점: Microsoft 글은 갱신은 저장소로만 하되, 읽기는 저장소 밖 쿼리로 해도 된다고 한다(CQRS). 여기서는 읽기도 그 aggregate의 저장소에 둔다.
@@ -95,7 +95,7 @@ API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 자�
 | 옛 방식 | 어긋난 기준 |
 |---|---|
 | 같은 응답 조립과 상위 상태 검사를 곳마다 복사 | `qef:dev`의 `criteria/review-lenses.md` 단순성 판정 규칙(같은 규칙은 두 번째부터, 같은 모양은 세 번째에 판단) |
-| 다른 도메인의 표를 직접 쓰고, 트랜잭션 없이 함께 바꾸기 | 도메인 사이 |
+| 다른 도메인의 테이블을 직접 쓰고, 트랜잭션 없이 함께 바꾸기 | 도메인 사이 |
 | 쪽 크기 상한 없음, 맨 배열 목록 | 목록 |
 | GET이 읽음 표시를 하는 등 쓰기를 함, 쓰기 값을 쿼리로 받기 | 쓰기 |
 | 반복해도 같은 결과인 설정을 POST로 | 쓰기 |
