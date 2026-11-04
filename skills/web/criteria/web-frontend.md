@@ -55,6 +55,17 @@
 
 근거: Design Tokens Community Group, "Design Tokens Format Module" (https://www.designtokens.org/tr/drafts/format/); Atlassian Design System, "Design tokens" (https://atlassian.design/foundations/tokens/design-tokens).
 
+## 기준에 없는 것
+
+이 문서에 규칙이 없는 화면 판단은 아래 차례로 근거를 찾고, 쓴 근거를 판단 기록에 적는다.
+
+1. 프로젝트의 규칙 문서와 열린 이슈
+2. Carbon Design System (표, 목록, 폼 같은 업무 화면 컴포넌트)
+3. GOV.UK Design System (흐름, 이동, 오류, 문구)
+4. 셋 다 없으면 Nielsen Norman Group 글
+
+근거: Carbon Design System (https://carbondesignsystem.com/); GOV.UK Design System (https://design-system.service.gov.uk/); Nielsen Norman Group (https://www.nngroup.com/articles/).
+
 ## 옛 방식에서 바꿀 것
 
 이전 프로젝트에 남은 방식 중, 위 기준에 어긋나서 따라 하지 않을 것이다.
