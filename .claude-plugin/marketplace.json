@@ -7,7 +7,7 @@
     {
       "name": "qef",
       "source": "./",
-      "description": "Quod erat faciendum: 코드 변경을 상위 설계부터 정하고 한 부분씩 처리하게 하며, 판단과 결과를 실행 기록에 남긴다."
+      "description": "Quod erat faciendum: 개발 일의 작업 방식과 구조 판단 기준. 입구 스킬 qef:workflow를 지정해 쓴다."
     }
   ]
 }
