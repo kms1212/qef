@@ -102,6 +102,118 @@ restore SessionEnd clear "$invoked"
 restore SessionEnd clear "$other"
 [ -z "$(restore SessionStart clear "$tmp/new.jsonl")" ] || fail '/clear outside qef should stay silent'
 
+work="$tmp/work"
+mkdir -p "$work"
+git -C "$work" init -q
+git -C "$work" -c user.name=t -c user.email=t@t commit -q --allow-empty -m init
+work=$(cd "$work" && pwd -P)
+seq 1 5 > "$work/doc.md"
+seq 1 300000 > "$work/huge.md"
+
+job() { (cd "$work" && "$root/scripts/job.sh" "$@") 2>/dev/null; }
+hook() {
+  printf '%s' "$2" | "$root/scripts/$1" 2>/dev/null
+}
+common() { printf '"session_id":"%s","cwd":"%s","transcript_path":"%s"' "${1:-s1}" "$work" "$tmp/transcript.jsonl"; }
+pre() { hook job-gate.sh "{$(common "$3"),\"hook_event_name\":\"PreToolUse\",\"tool_name\":\"$1\",\"tool_input\":$2}"; }
+read_lines() {
+  hook read-log.sh "{$(common),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$1\"},\"tool_response\":{\"type\":\"text\",\"file\":{\"filePath\":\"$1\",\"content\":\"x\",\"numLines\":$3,\"startLine\":$2,\"totalLines\":$4}}}"
+}
+write_to() { pre Write "{\"file_path\":\"$1\",\"content\":\"x\"}" "$2"; }
+expect() { case "$2" in *"$3"*) ;; *) fail "$1: got [$2]" ;; esac; }
+expect_none() { [ -z "$2" ] || fail "$1: got [$2]"; }
+: > "$tmp/transcript.jsonl"
+d="$work/.qef/j"
+
+expect_none 'an unbound session is not gated' "$(write_to "$work/a.ts")"
+expect_none 'an unbound session is not gated (agent)' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')"
+enter() { hook job.sh "{$(common "$2"),\"hook_event_name\":\"UserPromptExpansion\",\"command_name\":\"qef:workflow\",\"command_args\":\"$1\"}"; }
+expect_none 'nothing is open, entering says nothing' "$(enter nope)"
+
+job open s1 j >/dev/null || fail 'open should work'
+[ -f "$d/goal.md" ] && [ -f "$d/structure.md" ] && [ -f "$d/progress.md" ] && [ -f "$d/reasoning.md" ] && [ -f "$d/sources.txt" ] || fail 'open should make the files'
+job open s1 j && fail 'open should refuse an existing job'
+job open s1 a/b && fail 'open should refuse a path'
+job open s1 'a b' && fail 'open should refuse a space'
+grep -qx '.qef/' "$work/.git/info/exclude" || fail 'open should exclude .qef'
+
+expect 'an empty goal blocks code' "$(write_to "$work/a.ts")" 'goal.md가 비어'
+expect 'an empty goal blocks the implementer' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')" 'goal.md가 비어'
+expect_none 'a designer needs no approval' "$(pre Agent '{"subagent_type":"qef:designer","prompt":"x"}')"
+expect_none 'progress stays free' "$(write_to "$d/progress.md")"
+
+job add s1 huge.md && fail 'add should refuse a file over 256KB'
+job add s1 doc.md || fail 'add should work'
+job add s1 doc.md
+[ "$(grep -c '^doc.md$' "$d/sources.txt")" = 1 ] || fail 'add should not repeat a path'
+
+expect 'unread sources block the goal' "$(write_to "$d/goal.md")" 'doc.md (전체)'
+expect 'unread sources block any agent' "$(pre Agent '{"subagent_type":"qef:designer","prompt":"x"}')" 'doc.md (전체)'
+expect 'cutting an unread source is blocked' "$(pre Bash '{"command":"head -n 2 doc.md"}')" '잘라 읽을 수 없습니다'
+expect 'filtering an unread source is blocked' "$(pre Bash '{"command":"cat doc.md | cut -c1-40"}')" '잘라 읽을 수 없습니다'
+expect_none 'other files can be cut' "$(pre Bash '{"command":"head -n 2 other.md"}')"
+expect_none 'reading without cutting passes' "$(pre Bash '{"command":"git status"}')"
+expect_none 'a subagent may cut' "$(hook job-gate.sh "{$(common),\"agent_id\":\"a\",\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"head doc.md\"}}")"
+
+read_lines "$work/doc.md" 1 2 6
+expect 'a partial read is not enough' "$(write_to "$d/goal.md")" 'doc.md (3~6)'
+read_lines "$work/doc.md" 3 4 6
+expect 'pages add up, so the goal only asks now' "$(write_to "$d/goal.md")" '"ask"'
+expect_none 'a fully read source can be searched' "$(pre Bash '{"command":"grep 3 doc.md"}')"
+echo 6 >> "$work/doc.md"
+expect 'a changed source is unread again' "$(write_to "$d/goal.md")" 'doc.md (전체)'
+read_lines "$work/doc.md" 1 7 7
+
+expect 'a subagent cannot write the goal' "$(hook job-gate.sh "{$(common),\"agent_id\":\"a\",\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$d/goal.md\"}}")" 'deny'
+expect 'the source list asks' "$(write_to "$d/sources.txt")" '"ask"'
+
+printf '# 고정 목표\n\n## 일의 이유\n구조가 무너졌다\n' > "$d/goal.md"
+expect 'structure needs both design skills' "$(write_to "$d/structure.md")" 'qef:model'
+printf '{"input":{"skill":"qef:model"}}\n' > "$tmp/transcript.jsonl"
+expect 'structure needs layout too' "$(write_to "$d/structure.md")" 'qef:model'
+printf '{"input":{"skill":"qef:model"}}\n{"input":{"skill":"qef:layout"}}\n' > "$tmp/transcript.jsonl"
+expect 'structure asks after both skills' "$(write_to "$d/structure.md")" '"ask"'
+expect 'empty structure still blocks code' "$(write_to "$work/a.ts")" 'structure.md가 비어'
+printf '# 구조 목표\nAccount: 구체 클래스\n' > "$d/structure.md"
+expect_none 'approved files open the code' "$(write_to "$work/a.ts")"
+expect_none 'approved files open the implementer' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')"
+expect_none 'files outside the project are free' "$(write_to "$tmp/elsewhere.txt")"
+
+context=$(enter j s3)
+expect 'entering injects the goal' "$context" '구조가 무너졌다'
+expect 'entering injects the structure' "$context" 'Account: 구체 클래스'
+expect 'entering lists unread sources' "$context" 'doc.md (전체)'
+[ "$(cat "$work/.qef/.sessions/s3")" = j ] || fail 'entering should bind the session'
+expect 'words after the job name are ignored' "$(enter 'j 이어서 진행' s7)" '구조가 무너졌다'
+expect 'entering by a tool call works too' "$(hook job.sh "{$(common s4),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Skill\",\"tool_input\":{\"skill\":\"qef:workflow\",\"args\":\"j\"},\"tool_response\":{\"success\":true}}")" '구조가 무너졌다'
+expect 'a wrong name lists open jobs and does not create' "$(enter wrong s5)" '열린 일: j'
+[ ! -e "$work/.qef/wrong" ] || fail 'a wrong name should not create a job'
+[ ! -e "$work/.qef/.sessions/s5" ] || fail 'a wrong name should not bind'
+
+session_start() { hook job.sh "{$(common "$2"),\"hook_event_name\":\"SessionStart\",\"source\":\"$1\"}"; }
+expect 'compaction reinjects' "$(session_start compact s1)" '구조가 무너졌다'
+expect_none 'an unbound session gets nothing' "$(session_start compact s9)"
+expect 'a subagent gets goal and structure' "$(hook job.sh "{$(common),\"hook_event_name\":\"SubagentStart\",\"agent_id\":\"a\",\"agent_type\":\"x\"}")" 'Account: 구체 클래스'
+hook job.sh "{$(common),\"hook_event_name\":\"SessionEnd\",\"reason\":\"clear\"}"
+expect '/clear carries the job to the new session' "$(session_start clear s6)" '구조가 무너졌다'
+
+tree=$(git -C "$work" add -A && git -C "$work" write-tree)
+printf '# 진행 상황\n스냅샷: %s\n' "$tree" > "$d/progress.md"
+case "$(session_start compact s1)" in *'뒤로 코드가 바뀌었습니다'*) fail 'an equal tree is not stale' ;; esac
+echo changed > "$work/changed"
+expect 'a changed tree is stale' "$(session_start compact s1)" '뒤로 코드가 바뀌었습니다'
+
+close_job() { hook job.sh "{$(common "$2"),\"hook_event_name\":\"UserPromptExpansion\",\"command_name\":\"qef:close\",\"command_args\":\"$1\"}"; }
+expect 'an unfinished structure refuses closing' "$(close_job j)" '닫지 않았습니다'
+[ -f "$d/goal.md" ] || fail 'a refused close should keep the job'
+printf '# 구조 목표\n구조 결정 없음\n' > "$d/structure.md"
+expect 'closing moves the job' "$(close_job j)" '닫아'
+[ ! -e "$d" ] || fail 'closing should move the folder'
+[ -f "$work/.qef/archive/$(date +%Y-%m-%d)-j/goal.md" ] || fail 'closing should keep the files in the archive'
+[ ! -e "$work/.qef/.sessions/s1.reads" ] || fail 'closing should drop the read log'
+expect_none 'a closed job gates nothing' "$(write_to "$work/a.ts")"
+expect_none 'a closed job injects nothing' "$(session_start compact s1)"
+
 [ "$failures" -eq 0 ] && { echo 'all passed'; exit 0; }
 printf '%s failed\n' "$failures"
 exit 1

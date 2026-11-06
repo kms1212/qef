@@ -9,6 +9,15 @@
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/restore-workflow.sh"
           }
         ]
+      },
+      {
+        "matcher": "compact|clear|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
+          }
+        ]
       }
     ],
     "SessionEnd": [
@@ -18,6 +27,31 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/restore-workflow.sh"
+          },
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "matcher": "^(qef:)?(workflow|close)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
           }
         ]
       }
@@ -30,6 +64,35 @@
             "type": "command",
             "if": "Bash(git *)",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/commit-gate.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Write|Edit|NotebookEdit|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job-gate.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/read-log.sh"
           }
         ]
       }
