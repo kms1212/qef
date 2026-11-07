@@ -117,7 +117,7 @@ hook() {
 common() { printf '"session_id":"%s","cwd":"%s","transcript_path":"%s"' "${1:-s1}" "$work" "$tmp/transcript.jsonl"; }
 pre() { hook job-gate.sh "{$(common "$3"),\"hook_event_name\":\"PreToolUse\",\"tool_name\":\"$1\",\"tool_input\":$2}"; }
 read_lines() {
-  hook read-log.sh "{$(common),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$1\"},\"tool_response\":{\"type\":\"text\",\"file\":{\"filePath\":\"$1\",\"content\":\"x\",\"numLines\":$3,\"startLine\":$2,\"totalLines\":$4}}}"
+  hook read-log.sh "{$(common "$5"),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$1\"},\"tool_response\":{\"type\":\"text\",\"file\":{\"filePath\":\"$1\",\"content\":\"x\",\"numLines\":$3,\"startLine\":$2,\"totalLines\":$4}}}"
 }
 write_to() { pre Write "{\"file_path\":\"$1\",\"content\":\"x\"}" "$2"; }
 expect() { case "$2" in *"$3"*) ;; *) fail "$1: got [$2]" ;; esac; }
@@ -179,11 +179,37 @@ expect_none 'approved files open the code' "$(write_to "$work/a.ts")"
 expect_none 'approved files open the implementer' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')"
 expect_none 'files outside the project are free' "$(write_to "$tmp/elsewhere.txt")"
 
+seq 1 2 > "$work/doc2.md"
+job add s1 doc2.md
 context=$(enter j s3)
 expect 'entering injects the goal' "$context" '구조가 무너졌다'
 expect 'entering injects the structure' "$context" 'Account: 구체 클래스'
-expect 'entering lists unread sources' "$context" 'doc.md (전체)'
+expect 'entering lists unread sources' "$context" 'doc2.md (전체)'
+case "$context" in *'doc.md (전체)'*) fail 'a source read by another session is not unread' ;; esac
 [ "$(cat "$work/.qef/.sessions/s3")" = j ] || fail 'entering should bind the session'
+expect 'a new unread source blocks every session' "$(write_to "$work/a.ts" s3)" 'doc2.md (전체)'
+read_lines "$work/doc2.md" 1 2 2 s1
+expect_none 'a later session does not reread the sources' "$(write_to "$work/a.ts" s3)"
+echo 3 >> "$work/doc2.md"
+expect 'a changed source is unread for the whole job' "$(write_to "$work/a.ts" s3)" 'doc2.md (전체)'
+read_lines "$work/doc2.md" 1 3 3 s3
+
+cp "$d/goal.md" "$tmp/goal.keep"
+seq 1 3000 >> "$d/goal.md"
+oversize=$(enter j s8)
+expect 'an oversized goal is left to Read' "$oversize" '싣지 않은 파일입니다. 지금 Read로 끝까지 읽습니다. goal.md'
+expect 'the rest still fits' "$oversize" 'Account: 구체 클래스'
+case "$oversize" in *'구조가 무너졌다'*) fail 'an oversized goal should not be injected' ;; esac
+expect 'an unread oversized goal blocks code' "$(write_to "$work/a.ts" s8)" 'goal.md이 주입 상한'
+read_lines "$d/goal.md" 1 3004 3004 s3
+expect 'another session reading it does not count' "$(write_to "$work/a.ts" s8)" 'goal.md이 주입 상한'
+read_lines "$d/goal.md" 1 3004 3004 s8
+expect_none 'reading it opens the code' "$(write_to "$work/a.ts" s8)"
+cp "$tmp/goal.keep" "$d/goal.md"
+seq 1 4000 >> "$d/progress.md"
+expect 'an oversized progress is left to Read' "$(enter j s8)" '지금 Read로 끝까지 읽습니다. progress.md'
+expect_none 'an oversized progress does not block code' "$(write_to "$work/a.ts" s8)"
+printf '# 진행 상황\n' > "$d/progress.md"
 expect 'words after the job name are ignored' "$(enter 'j 이어서 진행' s7)" '구조가 무너졌다'
 expect 'entering by a tool call works too' "$(hook job.sh "{$(common s4),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Skill\",\"tool_input\":{\"skill\":\"qef:workflow\",\"args\":\"j\"},\"tool_response\":{\"success\":true}}")" '구조가 무너졌다'
 expect 'a wrong name lists open jobs and does not create' "$(enter wrong s5)" '열린 일: j'
@@ -210,7 +236,7 @@ printf '# 구조 목표\n구조 결정 없음\n' > "$d/structure.md"
 expect 'closing moves the job' "$(close_job j)" '닫아'
 [ ! -e "$d" ] || fail 'closing should move the folder'
 [ -f "$work/.qef/archive/$(date +%Y-%m-%d)-j/goal.md" ] || fail 'closing should keep the files in the archive'
-[ ! -e "$work/.qef/.sessions/s1.reads" ] || fail 'closing should drop the read log'
+[ ! -e "$work/.qef/archive/$(date +%Y-%m-%d)-j/.reads" ] || fail 'closing should drop the read log'
 expect_none 'a closed job gates nothing' "$(write_to "$work/a.ts")"
 expect_none 'a closed job injects nothing' "$(session_start compact s1)"
 

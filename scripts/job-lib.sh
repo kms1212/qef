@@ -37,14 +37,28 @@ real_path() {
 
 sources() { [ -f "$dir/sources.txt" ] && grep -Ev '^[[:space:]]*(#.*)?$' "$dir/sources.txt"; }
 
-# Prints the line ranges of a file this session has not read in its current content; nothing when fully read.
+# Hook text past 10,000 characters reaches the model only as a path and a preview, so files that do not fit are left to Read.
+oversized() {
+  budget=8000
+  for name in "$@"; do
+    count=$(LC_ALL=en_US.UTF-8 wc -m < "$dir/$name" | tr -d ' ')
+    if [ "$count" -le "$budget" ]; then
+      budget=$((budget - count))
+    else
+      printf '%s ' "$name"
+    fi
+  done
+}
+
+# Prints the line ranges of a file not yet read in its current content; nothing when fully read.
+# A source needs one read per job. With a session as the second argument, only that session's reads count.
 missing_ranges() {
   path=$(real_path "$1")
   [ -f "$path" ] || { echo '파일 없음'; return; }
   sum=$(cksum < "$path" | tr -d ' \t')
-  log="$sessions/$session.reads"
+  log="$dir/.reads"
   [ -f "$log" ] || { echo '전체'; return; }
-  awk -F '\t' -v p="$path" -v s="$sum" '$1 == p && $2 == s { print $3 "\t" $4 "\t" $5 }' "$log" \
+  awk -F '\t' -v p="$path" -v s="$sum" -v only="$2" '$1 == p && $2 == s && (only == "" || $6 == only) { print $3 "\t" $4 "\t" $5 }' "$log" \
     | sort -n \
     | awk -F '\t' '
         { if ($3 > total) total = $3

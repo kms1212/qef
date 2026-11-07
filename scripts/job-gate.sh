@@ -18,6 +18,10 @@ $unread"
 require_approval() {
   has_content "$dir/goal.md" || decide deny "qef 일 「$job」의 goal.md가 비어 있습니다. 사용자가 승인한 고정 목표가 있어야 구현할 수 있습니다."
   has_content "$dir/structure.md" || decide deny "qef 일 「$job」의 structure.md가 비어 있습니다. 다음 구조를 사용자에게 승인받아 적습니다. 구조 결정이 없는 일은 '구조 결정 없음' 한 줄로 승인받습니다."
+  for name in $(oversized goal.md structure.md progress.md); do
+    [ "$name" != progress.md ] || continue
+    [ -z "$(missing_ranges "$dir/$name" "$session")" ] || decide deny "$name이 주입 상한을 넘어 이 세션에 실리지 않았습니다. Read로 끝까지 읽습니다: $dir/$name"
+  done
 }
 
 called_skill() { grep -Eq "\"skill\":\"qef:$1\"|<command-name>/?qef:$1</command-name>" "$(field transcript_path)" 2>/dev/null; }

@@ -75,14 +75,18 @@ stale_note() {
 }
 
 context() {
+  files='goal.md structure.md'
+  [ "$1" != full ] || files="$files progress.md"
+  late=$(oversized $files)
   printf '이 세션은 qef 일 「%s」에 묶여 있습니다. 파일 자리: %s\n\n' "$job" "$dir"
-  cat "$dir/goal.md"
-  printf '\n'
-  cat "$dir/structure.md"
+  for name in $files; do
+    case " $late " in
+      *" $name "*) ;;
+      *) cat "$dir/$name"; printf '\n' ;;
+    esac
+  done
+  [ -z "$late" ] || printf '주입 상한을 넘어 싣지 않은 파일입니다. 지금 Read로 끝까지 읽습니다. %s\n\n' "$late"
   if [ "$1" = full ]; then
-    printf '\n'
-    cat "$dir/progress.md"
-    printf '\n'
     stale_note
     unread=$(unread_sources)
     [ -z "$unread" ] || printf '아직 끝까지 읽지 않은 자료입니다. Read로 읽기 전에는 구현과 구조 결정이 막힙니다.\n%s\n\n' "$unread"
@@ -91,20 +95,12 @@ context() {
   fi
 }
 
-# The cap is on the injected text; past it Claude Code hands over only a path and a preview.
-checked_context() {
-  text=$(context "$1")
-  printf '%s\n' "$text"
-  count=$(printf '%s' "$text" | LC_ALL=en_US.UTF-8 wc -m | tr -d ' ')
-  [ "$count" -le 9000 ] || printf '\n주입한 파일이 %s자라 상한 10,000자에 가깝습니다. progress.md와 goal.md를 줄입니다.\n' "$count"
-}
-
 enter() {
   name=${1%% *}
   mkdir -p "$sessions"
   if [ -n "$name" ] && [ -f "$qef/$name/goal.md" ]; then
     printf '%s\n' "$name" > "$sessions/$session"
-    bound_job && checked_context full
+    bound_job && context full
     return
   fi
   jobs=$(open_jobs | paste -sd, - | sed 's/,/, /g')
@@ -130,8 +126,9 @@ close() {
   archived="$qef/archive/$(date +%Y-%m-%d)-$name"
   mkdir -p "$qef/archive"
   [ ! -e "$archived" ] || archived="$archived-$$"
+  rm -f "$target/.reads"
   mv "$target" "$archived"
-  [ -d "$sessions" ] && grep -lxF "$name" "$sessions"/* 2>/dev/null | while IFS= read -r mark; do rm -f "$mark" "$mark.reads"; done
+  [ -d "$sessions" ] && grep -lxF "$name" "$sessions"/* 2>/dev/null | while IFS= read -r mark; do rm -f "$mark"; done
   printf '일 「%s」을 닫아 %s로 옮겼습니다. 아래 고정 목표에서 프로젝트 규칙으로 올릴 줄이 있으면 사용자에게 안을 보입니다.\n\n' "$name" "$archived"
   cat "$archived/goal.md"
 }
@@ -155,7 +152,7 @@ case "$event" in
       rm -f "$mark"
     fi
     bound_job || exit 0
-    checked_context full | emit
+    context full | emit
     ;;
   SessionEnd)
     [ "$(field reason)" = clear ] || exit 0
@@ -164,7 +161,7 @@ case "$event" in
     ;;
   SubagentStart)
     bound_job || exit 0
-    checked_context | emit
+    context | emit
     ;;
 esac
 exit 0

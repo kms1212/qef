@@ -1,5 +1,5 @@
 #!/bin/sh
-# Records which lines the coordinating session actually received from each Read, under its job.
+# Records which lines a coordinating session actually received from each Read, in its job's log.
 . "$(dirname "$0")/job-lib.sh"
 
 [ -z "$agent" ] || exit 0
@@ -20,5 +20,5 @@ if [ -z "$total" ]; then
   start=1 count=1 total=1
 fi
 
-printf '%s\t%s\t%s\t%s\t%s\n' "$path" "$(cksum < "$path" | tr -d ' \t')" "$start" "$count" "$total" >> "$sessions/$session.reads"
+printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$path" "$(cksum < "$path" | tr -d ' \t')" "$start" "$count" "$total" "$session" >> "$dir/.reads"
 exit 0
