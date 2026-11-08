@@ -40,6 +40,17 @@ mcp-ts-morph의 한계는 README에 있다. 이 경우는 언어 서버로 참�
 
 잰 결과는 판단의 입력이다. 도구가 잡지 못하는 개념과 타입 관계는 `qef:model`, `qef:layout`으로 본다.
 
+## 테스트할 때
+
+| 일 | 후보 |
+|---|---|
+| 가짜 HTTP 요청·응답을 서버 스키마로 검사 | MSW handler에서 서버와 공유하는 스키마(zod 등)로 parse. OpenAPI가 있으면 openapi-msw |
+| 서버 응답이 스키마를 지키는지 단언 | 공유 스키마로 parse. OpenAPI가 있으면 vitest-openapi, jest-openapi |
+| Playwright에서 worker마다 데이터 나누기 | worker 범위 fixture를 `parallelIndex`로 나눔. 로그인은 `storageState` 재사용 |
+| Playwright 테스트 독립성 확인 | 그 spec만 `--repeat-each`로 반복 |
+
+Playwright의 `test.describe.serial`은 쓰지 않는다. 하나가 실패하면 뒤가 모두 건너뛰어진다.
+
 ## 포맷과 lint
 
 프로젝트의 포매터와 lint를 쓴다. 커밋 관문에 넣을 때는 `qef:finish`를 따른다.
