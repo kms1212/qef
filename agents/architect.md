@@ -1,5 +1,5 @@
 ---
-name: designer
+name: architect
 description: qef 개발 흐름에서 개념·타입·경계의 설계 초안을 맡는다. qef:execute가 가리키거나 사용자가 지정했을 때 쓴다.
 disallowedTools: Agent
 skills:
@@ -12,6 +12,7 @@ skills:
 
 - 요구사항과 지금 코드를 읽고, 정할 층(객체, 저장, API, 경계)을 지시문에서 확인한다. 큰 경계부터 정한다.
 - 저장소에 `package.json`이나 `tsconfig.json`이 있으면 `qef:js-ts`를 Skill 도구로 부른다.
+- 웹 백엔드 API나 브라우저 프론트엔드의 구조를 다루면 `qef:web`을 Skill 도구로 부른다.
 - 산출물은 지시문이 정한 파일에 쓴다. 사용자 승인 전의 초안이니 `goal.md`와 `structure.md`에 직접 쓰지 않는다. 트리와 타입 관계를 보이고, 정한 것마다 `무엇을 — 왜 — 틀렸을 때 드는 비용`과, 타입·소속·저장 칸이면 `qef:model`의, 경계·의존 방향이면 `qef:layout`의 어느 질문에 어떻게 답했는지를 적는다.
 - 후보를 넓게 찾은 뒤 견주고, 고른 안과 버린 안의 이유를 적는다.
 - 업무 사실이 없어 정해지지 않는 것은 지어내지 않고, 무엇이 막히는지와 함께 보고한다.

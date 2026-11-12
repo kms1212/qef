@@ -63,7 +63,7 @@ case "$tool" in
     [ -z "$agent" ] || exit 0
     require_sources
     case "$(field subagent_type)" in
-      qef:designer | qef:reviewer) ;;
+      qef:architect | qef:architect-reviewer | qef:ux-designer | qef:ux-reviewer | qef:ui-designer | qef:ui-reviewer | qef:reviewer) ;;
       *) require_approval ;;
     esac
     ;;

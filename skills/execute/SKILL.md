@@ -9,13 +9,17 @@ description: 정해진 일을 직접·위임·병렬로 실행할 때 쓴다. qe
 
 ## 어느 agent
 
-| 맡기는 일 | agent |
-|---|---|
-| 개념·경계의 설계 초안 | `qef:designer` |
-| 정해진 부분의 구현, 코드 옮기기, 그 부분의 테스트 | `qef:implementer` |
-| 지금 구조의 평가, 요구사항 파일 점검(`qef:intake`), 통합 때의 요구사항 대조(`qef:finish`) | `qef:reviewer` |
+| 맡기는 일 | agent | 그 결과를 리뷰하는 짝 |
+|---|---|---|
+| 개념·경계의 설계 초안 | `qef:architect` | `qef:architect-reviewer` |
+| 사람이 쓰는 화면의 UX 설계 초안 | `qef:ux-designer` | `qef:ux-reviewer` |
+| UX 설계를 받은 화면의 UI 설계 초안 | `qef:ui-designer` | `qef:ui-reviewer` |
+| 정해진 부분의 구현, 코드 옮기기, 그 부분의 테스트 | `qef:implementer` | `qef:implementer-reviewer` |
+| 지금 구조의 평가, 요구사항 파일 점검(`qef:intake`) | `qef:reviewer` | |
 
 스킬은 agent 정의로 실려 들어가니 지시문에 다시 적지 않는다.
+
+개발 agent의 결과는 그 짝 reviewer가 리뷰하고, 짝 reviewer는 개발 agent와 같은 `skills` 목록을 싣는다. 다른 기준으로 보면 만든 쪽이 따른 기준에서의 결함을 놓치고, 따르지 않은 기준을 지적하기 때문이다. 개발 agent를 더하거나 그 `skills`를 바꾸면 짝 reviewer를 함께 만들거나 바꾼다.
 
 ## 지시문
 

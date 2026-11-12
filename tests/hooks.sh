@@ -139,7 +139,12 @@ grep -qx '.qef/' "$work/.git/info/exclude" || fail 'open should exclude .qef'
 
 expect 'an empty goal blocks code' "$(write_to "$work/a.ts")" 'goal.md가 비어'
 expect 'an empty goal blocks the implementer' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')" 'goal.md가 비어'
-expect_none 'a designer needs no approval' "$(pre Agent '{"subagent_type":"qef:designer","prompt":"x"}')"
+expect_none 'an architect needs no approval' "$(pre Agent '{"subagent_type":"qef:architect","prompt":"x"}')"
+expect_none 'its reviewer needs no approval' "$(pre Agent '{"subagent_type":"qef:architect-reviewer","prompt":"x"}')"
+expect_none 'ux-designer needs no approval' "$(pre Agent '{"subagent_type":"qef:ux-designer","prompt":"x"}')"
+expect_none 'ux-reviewer needs no approval' "$(pre Agent '{"subagent_type":"qef:ux-reviewer","prompt":"x"}')"
+expect_none 'ui-designer needs no approval' "$(pre Agent '{"subagent_type":"qef:ui-designer","prompt":"x"}')"
+expect_none 'ui-reviewer needs no approval' "$(pre Agent '{"subagent_type":"qef:ui-reviewer","prompt":"x"}')"
 expect_none 'progress stays free' "$(write_to "$d/progress.md")"
 
 job add s1 huge.md && fail 'add should refuse a file over 256KB'
@@ -148,7 +153,7 @@ job add s1 doc.md
 [ "$(grep -c '^doc.md$' "$d/sources.txt")" = 1 ] || fail 'add should not repeat a path'
 
 expect 'unread sources block the goal' "$(write_to "$d/goal.md")" 'doc.md (전체)'
-expect 'unread sources block any agent' "$(pre Agent '{"subagent_type":"qef:designer","prompt":"x"}')" 'doc.md (전체)'
+expect 'unread sources block any agent' "$(pre Agent '{"subagent_type":"qef:architect","prompt":"x"}')" 'doc.md (전체)'
 expect 'cutting an unread source is blocked' "$(pre Bash '{"command":"head -n 2 doc.md"}')" '잘라 읽을 수 없습니다'
 expect 'filtering an unread source is blocked' "$(pre Bash '{"command":"cat doc.md | cut -c1-40"}')" '잘라 읽을 수 없습니다'
 expect_none 'other files can be cut' "$(pre Bash '{"command":"head -n 2 other.md"}')"
