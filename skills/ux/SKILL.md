@@ -7,11 +7,11 @@ description: 사람이 쓰는 화면의 UX 기준과 화면 공통의 판단 기
 
 ## 판정의 뿌리
 
-- 사용성은 정해진 사용자가 정해진 맥락에서 정해진 목표를 이루는 정도다. 에이전트는 글로 된 기준에 대 볼 수 있는 판단만 정한다. 기준이 사용자의 머릿속에만 있는 판단(이 업무에서 이 순서가 편한가, 이 정보가 첫 화면에 필요한가, 문구가 자연스러운가)은 정하지 않고, 「사람이 볼 것」으로 모아 끝낼 때 보인다.
-- 화면을 띄워 써 보고 괜찮다고 말하는 것은 근거가 아니다. 「좋아 보이는가」를 묻지 않고, 무엇에 대 봤는지를 적는다.
+- 사용성은 정해진 사용자가 정해진 맥락에서 정해진 목표를 이루는 정도다. 에이전트는 글로 된 기준에 대조할 수 있는 판단만 정한다. 기준이 사용자의 머릿속에만 있는 판단(이 업무에서 이 순서가 편한가, 이 정보가 첫 화면에 필요한가, 문구가 자연스러운가)은 정하지 않고, 「사람이 볼 것」으로 모아 끝낼 때 보인다.
+- 화면을 띄워 써 보고 괜찮다고 말하는 것은 근거가 아니다. 「좋아 보이는가」를 묻지 않고, 무엇에 대조했는지를 적는다.
 - UX와 UI를 섞지 않는다. 이 스킬은 업무를 끝까지 할 수 있는가, 무엇을 어디에 보이는가, 무슨 말로 보이는가를 다룬다. 모양(정렬, overflow, 강조, 같은 종류의 요소가 같은 모양인가)은 `qef:ui`가 다룬다. 이 절과 「근거 없는 추가를 막는다」, 「이전 버전과 결함」은 UI에도 그대로 적용한다.
 - 기준은 이 차례로 찾는다: 사용자의 말과 요구사항, 이 스킬, 프로젝트의 규칙 문서와 열린 이슈, Carbon Design System(표, 목록, 폼 같은 업무 화면), GOV.UK Design System(흐름, 이동, 오류, 문구), Nielsen Norman Group. 쓴 근거를 `reasoning.md`에 적는다. 이 차례로도 정해지지 않으면 묻는다.
-- `references/`는 관례를 모은 점검 목록이다. 이 스킬과 부딪치면 이 스킬을 따른다. 형식을 안내하는 placeholder(`wondelai-nielsen-heuristics.md` 220행, `owl-form-design.md` 17행)가 그런 예다.
+- `references/`는 관례를 모은 점검 목록이다. 이 스킬과 충돌하면 이 스킬을 따른다. 형식을 안내하는 placeholder(`wondelai-nielsen-heuristics.md` 220행, `owl-form-design.md` 17행)가 그런 예다.
 
 ## 근거 없는 추가를 막는다
 
@@ -37,7 +37,7 @@ description: 사람이 쓰는 화면의 UX 기준과 화면 공통의 판단 기
 ## 순서와 보일 것
 
 - 메뉴와 입력 필드의 순서는 개념의 위계와 사용자가 정하는 순서를 따른다. 홈은 메뉴의 맨 앞에 둔다.
-- 요구사항의 범위어(맨 앞, 모두, 만)는 관례와 부딪치지 않게 읽는다. 관례로도 갈리면 묻는다.
+- 요구사항의 범위어(맨 앞, 모두, 만)는 관례와 충돌하지 않게 읽는다. 관례로도 갈리면 묻는다.
 - 로그인 직후 화면은 그 계정이 할 일을 보인다. 권한이 없다는 표시만 있는 첫 화면을 두지 않는다.
 - 기록을 열면 가장 필요한 것이 추가 조작 없이 보인다. 반드시 하나씩 짝지어진 것은 따로 탭을 두지 않고 기본 정보에 둔다.
 - 다른 화면에서 이미 다 보이는 것을 따로 목록 화면으로 만들지 않는다.
@@ -62,18 +62,18 @@ description: 사람이 쓰는 화면의 UX 기준과 화면 공통의 판단 기
 ## 이전 버전과 결함
 
 - 본궤도 일에서 화면을 바꾸기 전에 이전 버전의 화면 목록, accessibility tree(Playwright ARIA snapshot), screenshot을 떠 둔다. 바꾼 뒤 차이마다 요구사항 줄을 대고, 댈 줄이 없는 차이(사라진 요소, 바뀐 순서)는 사용자에게 보인다. 이 기록은 대조용이고 테스트가 아니다.
-- UX 결함은 하나씩 고치지 않는다. 그 결함이 나온 결정과 빠진 기준을 찾아, 같은 원인의 결함을 함께 덮는다.
+- UX 결함은 하나씩 고치지 않는다. 그 결함이 나온 결정과 빠진 기준을 찾아, 같은 원인의 결함을 함께 커버한다.
 
 ## references
 
 | 파일 | 쓰는 때 |
 |---|---|
-| `wondelai-nielsen-heuristics.md`, `wondelai-audit-template.md` | 휴리스틱마다 위반과 고침, 점검표, 과업 기반 감사 |
-| `wondelai-heuristic-conflicts.md` | 휴리스틱끼리 부딪칠 때 맥락으로 정하기 |
+| `wondelai-nielsen-heuristics.md`, `wondelai-audit-template.md` | 휴리스틱마다 위반과 수정, 점검표, 과업 기반 감사 |
+| `wondelai-heuristic-conflicts.md` | 휴리스틱끼리 충돌할 때 맥락으로 정하기 |
 | `intent-evaluate.md` | heuristic evaluation, cognitive walkthrough, 과업 성공 분석의 진행과 보고 형식 |
 | `intent-information-architecture.md`, `owl-navigation-patterns.md`, `owl-serial-position-effect.md` | 탐색 패턴, 길찾기, 메뉴 순서 |
 | `intent-interaction-patterns.md`, `owl-form-design.md` | 상태 목록, 검증 시점, 파괴적 동작의 안전장치, 폼 |
 | `szilu-data-tables.md` | 업무 앱의 표, 필터, 일괄 작업, 빈 상태 |
 | `owl-critique-information-density.md`, `impeccable-distill.md` | 화면의 정보량과 덜어 내기 |
 | `impeccable-clarify.md`, `intent-content-strategy.md` | 문구. `intent-content-strategy.md`의 「Voice Framework」와 「Tone Matrix」는 브랜드용이라 쓰지 않는다 |
-| `owl-parallel-concepts.md`, `owl-concept-selection.md` | 여러 안을 견주어 고르기 |
+| `owl-parallel-concepts.md`, `owl-concept-selection.md` | 여러 안을 비교해 고르기 |

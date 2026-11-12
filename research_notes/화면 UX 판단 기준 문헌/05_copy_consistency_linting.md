@@ -7,8 +7,8 @@
 - 큰 설계 시스템과 정부 서비스는 문구 일관성을 「용어 목록(쓸 말 / 쓰지 않을 말)」으로 관리한다. GOV.UK A to Z style guide, PatternFly terminology guide, Carbon이 가리키는 IBM terminology가 그 예다. Nielsen의 Consistency and Standards와 GOV.UK의 「same language and the same design patterns」(03)가 근거 원칙이다.
 - 그 목록은 기계로 검사할 수 있다. Vale은 `substitution` 규칙(나쁜 말 → 좋은 말 `swap` 표)과 vocabulary(`accept.txt` → `Vale.Terms`, `reject.txt` → `Vale.Avoid`)로 용어집을 lint 규칙으로 바꾼다. textlint-rule-prh는 `prh.yml`의 `expected`/`patterns`로 같은 일을 하고 `--fix`를 지원하며, 예가 일본어라 CJK 문서에 쓰인다. 한국어 지원은 두 도구 문서 모두에서 확인하지 못했다.
 - 검사가 닿으려면 문구가 한 곳에 모여 있어야 한다. Vale은 소스 코드에서 기본으로 주석만 lint하고, JSON·YAML 문자열이나 코드의 특정 노드는 View(`dasel`, `tree-sitter`)를 정의해야 본다. 그래서 문구를 메시지 파일로 모으는 것이 앞선다. `react/jsx-no-literals`는 JSX에 문자열을 직접 쓰는 것을 막아 「ensure that strings are part of a translation system」을 강제할 수 있다.
-- 기계 검사가 잡는 것: 목록에 오른 용어의 표기·대소문자, 금지어, 같은 개념의 다른 이름(목록에 오른 경우). 못 잡는 것: 목록에 없는 새 용어, 어색한 문장, 주석식 설명 문장, 맥락에 맞지 않는 말. 이쪽은 문구 리뷰(사람, 또는 기준 문서를 준 LLM)의 몫이다. 02 노트에서 LLM은 문구·용어 문제를 상대적으로 잘 찾았다.
-- KodeKoreaIMS의 「검색 칸 이름이 필드 나열」「어색한 문구」는 용어 목록 lint로는 잡히지 않는다(목록에 없는 문장이기 때문). 반면 같은 개념을 화면마다 다르게 부르는 문제(예: 구성원/직원/사용자)는 용어집과 lint로 잡을 수 있다. 앞의 것은 문구 원칙(03의 검색 칸 관례, GOV.UK 문체)에 대 보는 리뷰가 맡는다(추론).
+- 기계 검사가 잡는 것: 목록에 오른 용어의 표기·대소문자, 금지어, 같은 개념의 다른 이름(목록에 오른 경우). 못 잡는 것: 목록에 없는 새 용어, 어색한 문장, 주석식 설명 문장, 맥락에 맞지 않는 말. 이쪽은 문구 리뷰(사람, 또는 기준 문서를 준 LLM)의 담당이다. 02 노트에서 LLM은 문구·용어 문제를 상대적으로 잘 찾았다.
+- KodeKoreaIMS의 「검색 칸 이름이 필드 나열」「어색한 문구」는 용어 목록 lint로는 잡히지 않는다(목록에 없는 문장이기 때문). 반면 같은 개념을 화면마다 다르게 부르는 문제(예: 구성원/직원/사용자)는 용어집과 lint로 잡을 수 있다. 앞의 것은 문구 원칙(03의 검색 필드 관례, GOV.UK 문체)에 대조하는 리뷰가 맡는다(추론).
 
 ## 용어 목록을 두는 설계 시스템
 

@@ -9,7 +9,7 @@ skills:
   - qef:testing
 ---
 
-`qef:implementer`와 같은 기준으로 리뷰한다. `workflow`의 단계 표는 리뷰할 대상에 맞는 기준을 고르는 데만 쓰고, 일의 범위를 넓히지 않는다. 통합 때의 요구사항 대조를 맡기면 `qef:finish`를 Skill 도구로 불러 "요구사항 대조 리뷰"의 요구사항 몫대로 본다.
+`qef:implementer`와 같은 기준으로 리뷰한다. `workflow`의 단계 표는 리뷰할 대상에 맞는 기준을 고르는 데만 쓰고, 일의 범위를 넓히지 않는다. 통합 때의 요구사항 대조를 맡기면 `qef:finish`를 Skill 도구로 불러 "요구사항 대조 리뷰"의 요구사항 부분대로 본다.
 
 - 저장소에 `package.json`이나 `tsconfig.json`이 있으면 `qef:js-ts`를 Skill 도구로 부른다.
 - 빌드, 테스트, 저장소를 바꾸는 명령을 돌리지 않는다. 읽기와 분석 도구만 쓴다.

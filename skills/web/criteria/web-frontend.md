@@ -7,7 +7,7 @@
 - 쓰는 곳이 하나면 그곳에 둔다(colocation). 한 화면에서만 쓰는 컴포넌트와 로직은 그 화면과 같은 자리에 두고, 다른 화면이 쓰게 되는 순간 둘이 함께 보는 자리로 옮긴다. 미리 공통 자리에 두지 않는다.
 - 화면은 기능 단위로 묶고, 기능 단위는 백엔드 도메인과 같게 잡는다. 한 도메인의 화면, 그 도메인을 부르는 코드, 그 도메인 전용 컴포넌트는 한 자리에 모인다. "이 도메인 화면을 고치려면 어디를 여나"가 도메인 이름만으로 정해져야 한다.
 - 여러 도메인이 함께 쓰는 것과 어느 도메인의 것도 아닌 것(넓게 퍼진 공통 코드, 전역 설정)은 공통 자리에 둔다. 공통 자리 안에서도 그것이 다루는 개념 이름으로 나눈다(예: `lib/date/`, `config/`). `helpers`, `utils`, `common`, `shared`처럼 무엇이든 넣을 수 있는 이름은 쓰지 않는다(`qef:layout`의 「경로와 이름」).
-- 여러 화면이 함께 쓰는 껍데기(탭 바, 메뉴)는 상위 레이아웃이 갖고, 각 탭은 그 아래 형제 화면으로 둔다.
+- 여러 화면이 함께 쓰는 shell 컴포넌트(탭 바, 메뉴)는 상위 레이아웃이 갖고, 각 탭은 그 아래 형제 화면으로 둔다.
 
 근거: Kent C. Dodds, "Colocation" (https://kentcdodds.com/blog/colocation); Next.js, "Project structure" (https://nextjs.org/docs/app/getting-started/project-structure); Next.js, "Layouts and Pages" (https://nextjs.org/docs/app/getting-started/layouts-and-pages); React Router, "Routing" (https://reactrouter.com/start/framework/routing).
 
@@ -20,7 +20,7 @@
 - 도메인 대상을 보여 주는 컴포넌트는 서버 API의 그 객체를 받는다. 리렌더링을 줄이려고 메모이제이션하는 컴포넌트는 필요한 값만 받는다. 원시값만 받는 것은 기본 컴포넌트(버튼, 태그)이다.
 - 업데이트할 때는 바뀐 필드만 보낸다.
 - 쓰는 쪽이 필요한 만큼만 받는다. 다른 도메인의 정보는 그 루트 컬렉션의 Batch Get으로 모아 가져오고, 필요한 필드만 고른다(`criteria/web-api.md`).
-- 로딩 상태와 실패를 다루는 방식은 Suspense 경계와 Error Boundary마다 하나씩 둔다. 그 경계 안의 화면은 그 방식을 쓰고, 화면마다 따로 짜지 않는다. 로딩 표시는 실패해도 되돌린다. 실패를 어떻게 보일지는 `qef:ux`의 「문구」를 따른다.
+- 로딩 상태와 실패를 다루는 방식은 Suspense boundary와 Error Boundary마다 하나씩 둔다. 그 경계 안의 화면은 그 방식을 쓰고, 화면마다 따로 짜지 않는다. 로딩 표시는 실패해도 되돌린다. 실패를 어떻게 보일지는 `qef:ux`의 「문구」를 따른다.
 
 근거: openapi-typescript (https://openapi-ts.dev/introduction); react.dev, "Choosing the State Structure" (https://react.dev/learn/choosing-the-state-structure); TanStack Query, "Does this replace client state?" (https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state); TkDodo, "Practical React Query" (https://tkdodo.eu/blog/practical-react-query); Google AIP-157 (https://google.aip.dev/157); react.dev, "Suspense" (https://react.dev/reference/react/Suspense); Next.js, "error.js" (https://nextjs.org/docs/app/api-reference/file-conventions/error); TkDodo, "React Query Data Transformations" (https://tkdodo.eu/blog/react-query-data-transformations); Relay, "Fragments" (https://relay.dev/docs/tutorial/fragments-1/); react.dev, "memo" (https://react.dev/reference/react/memo); Google AIP-126, "Enumerations" (https://google.aip.dev/126); FormatJS, "Message Syntax" (https://formatjs.github.io/docs/core-concepts/icu-syntax/); RFC 5789 (https://www.rfc-editor.org/rfc/rfc5789); Google AIP-134 (https://google.aip.dev/134); WCAG 2.2, "Understanding Status Messages" (https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html); RFC 9110 (https://www.rfc-editor.org/rfc/rfc9110); GOV.UK Design System, "Page not found pages" (https://design-system.service.gov.uk/patterns/page-not-found-pages/), "Problem with the service pages" (https://design-system.service.gov.uk/patterns/problem-with-the-service-pages/).
 

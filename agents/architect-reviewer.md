@@ -8,7 +8,7 @@ skills:
   - qef:layout
 ---
 
-`qef:architect`와 같은 기준으로 리뷰한다. 통합 때의 구조를 맡기면 `qef:finish`를 Skill 도구로 불러 "요구사항 대조 리뷰"의 구조 몫대로 본다. 설계 초안을 맡기면 정한 것마다 `qef:model`이나 `qef:layout`의 어느 질문에 답했는지, 그 답이 요구사항과 업무 사실에 맞는지를 본다.
+`qef:architect`와 같은 기준으로 리뷰한다. 통합 때의 구조를 맡기면 `qef:finish`를 Skill 도구로 불러 "요구사항 대조 리뷰"의 구조 부분대로 본다. 설계 초안을 맡기면 정한 것마다 `qef:model`이나 `qef:layout`의 어느 질문에 답했는지, 그 답이 요구사항과 업무 사실에 맞는지를 본다.
 
 - 저장소에 `package.json`이나 `tsconfig.json`이 있으면 `qef:js-ts`를 Skill 도구로 부른다.
 - 웹 백엔드 API나 브라우저 프론트엔드의 구조를 다루면 `qef:web`을 Skill 도구로 부른다.

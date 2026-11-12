@@ -1,4 +1,4 @@
-# 필요한 것만 보여 준다: progressive disclosure, 정보 최소화, 내비게이션·검색 칸 관례, 내부 상태 숨기기
+# 필요한 것만 보여 준다: progressive disclosure, 정보 최소화, 내비게이션·검색 필드 관례, 내부 상태 숨기기
 
 모든 출처는 2026-11-09에 가져왔다. 표기 규칙은 01과 같다(「본문 확인」은 WebFetch 요약 모델을 거친 추출, 「검색 요약만」은 원문을 열지 못함). 인용은 15단어 이내다.
 
@@ -6,9 +6,9 @@
 
 - 무엇을 앞에 둘지는 「사용자 필요」와 「사용 빈도」로 정한다. 새 설계는 과업 분석, 기존 시스템은 사용 빈도 데이터로 고르고, 둘 다 관찰로 확인하라는 것이 NN/g다. GOV.UK 원칙은 「Start with user needs」「Do less」로 같은 방향을 정책으로 둔다. 둘 다 에이전트가 혼자 만들 수 있는 근거가 아니다. 요구사항(사용자 원문)과 이전 버전의 화면 목록이 그 대용이다.
 - 정보를 더하는 쪽에는 근거가 요구된다. Nielsen의 Aesthetic and Minimalist Design(01), ISO 9241-110의 「unnecessary information」(01), NN/g cognitive load 글, OWASP API3:2023의 「bare minimum」은 모두 「쓰지 않는 정보는 비용」이라는 쪽이다.
-- 내부 구현 상태를 드러내지 않는다는 근거는 세 겹이다. (1) 화면 말: NN/g Match 원칙의 「system-oriented terms」 대신 사용자 말, GOV.UK 오류 문구의 시스템 레이블 금지. (2) 과업 적합성: ISO 9241-110이 기능을 기술이 아니라 과업 특성에 맞추라고 함(01). (3) API: OWASP는 endpoint가 객체의 모든 속성을 돌려주는 것을 위험으로 들고, 필요한 속성만 골라 돌려주고 응답 스키마로 검증하라고 함. KodeKoreaIMS의 「마스터 키」 상태 칸은 (3)이 먼저 깨져 (1)로 번진 사례로 읽을 수 있다(추론).
+- 내부 구현 상태를 드러내지 않는다는 근거는 세 겹이다. (1) 화면 말: NN/g Match 원칙의 「system-oriented terms」 대신 사용자 말, GOV.UK 오류 문구의 시스템 레이블 금지. (2) 과업 적합성: ISO 9241-110이 기능을 기술이 아니라 과업 특성에 맞추라고 함(01). (3) API: OWASP는 endpoint가 객체의 모든 속성을 돌려주는 것을 위험으로 들고, 필요한 속성만 골라 돌려주고 응답 스키마로 검증하라고 함. KodeKoreaIMS의 「마스터 키」 상태 필드는 (3)이 먼저 깨져 (1)로 번진 사례로 읽을 수 있다(추론).
 - 「홈이 메뉴 맨 앞」은 보편 규칙이 아니라 여러 설계 시스템의 관례다. NN/g는 logo와 명시적 Home 링크를 둘 다 두고 왼쪽 위에 두라고 한다. SAP Fiori는 side navigation의 첫 항목을 Home으로 요구한다는 검색 요약이 있다(원문 403). 캐나다 GC Design System은 최상위 항목을 사용자에게 중요한 순서로 두라고 한다. 따라서 「묶음 안 순서」를 「메뉴 전체 순서」로 넓혀 홈 앞에 다른 항목을 둔 것은 이 관례들에 어긋난다.
-- 검색 칸은 placeholder만으로 레이블을 대신하지 않고, 검색 범위를 말로 알린다. 필드 이름을 나열하는 레이블을 권하는 출처는 찾지 못했다. GOV.UK와 Carbon의 예는 「Search [your service]」「Search for networks or devices」처럼 무엇을 찾는지를 말한다.
+- 검색 필드는 placeholder만으로 레이블을 대신하지 않고, 검색 범위를 말로 알린다. 필드 이름을 나열하는 레이블을 권하는 출처는 찾지 못했다. GOV.UK와 Carbon의 예는 「Search [your service]」「Search for networks or devices」처럼 무엇을 찾는지를 말한다.
 
 ## progressive disclosure
 
@@ -60,7 +60,7 @@
 - [Carbon, UI shell left panel](https://carbondesignsystem.com/components/UI-shell-left-panel/usage/) — 본문 확인. 순서나 홈 링크 규칙은 없다. 2단계까지만 지원(「does not support three tiers of navigation」).
 - [SAP Fiori, Side Navigation](https://www.sap.com/design-system/fiori-design-web/v1-145/ui-elements/side-navigation/usage) — 검색 요약만(원문 403). 첫 요소는 「Home」이고 진입 화면으로 연결해야 한다는 요약.
 
-## 검색 칸 레이블
+## 검색 필드 레이블
 
 - [NN/g, Placeholders in Form Fields Are Harmful](https://www.nngroup.com/articles/form-design-placeholders/) — 본문 확인.
   - 「Disappearing placeholder text strains users' short-term memory.」

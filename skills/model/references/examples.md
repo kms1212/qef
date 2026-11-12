@@ -7,7 +7,7 @@
 배송비를 계산한다. 정액 배송은 금액을 그대로 쓰고, 무게 배송은 무게에 단가를 곱한다.
 
 ```text
-나쁨: shipping_rules 표의 행 { kind: "weight", formula: "w*300" }
+나쁨: shipping_rules 테이블의 행 { kind: "weight", formula: "w*300" }
 좋음: ShippingMethod
        ├── FlatShipping
        └── WeightShipping

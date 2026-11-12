@@ -20,10 +20,10 @@ repo/
 
 백엔드의 서버와 배치 작업만 쓰는 재고 계산은 공용 `packages/`가 아니라 백엔드 안에 둔다. 프론트엔드도 쓰는 요청·응답 모양은 공용에 둔다.
 
-## 바뀌는 이유로 나누는 공용 바탕
+## 바뀌는 이유로 나누는 공용 foundation
 
 ```text
-나쁨: packages/foundation/ 안에 날짜 표기, 오류 바탕, 저장 연결이 섞임
+나쁨: packages/foundation/ 안에 날짜 표기, 오류 foundation, 저장 연결이 섞임
 좋음: packages/errors/, packages/formatting/, packages/storage/
 ```
 
@@ -59,7 +59,7 @@ validators/
 좋음: crypto가 봉인을 갖고 바이트만 다루며, 저장 패키지는 결과를 저장
 ```
 
-## 통로
+## 채널
 
 ```text
 나쁨: POST /uploads/metadata 뒤에 POST /uploads/content
@@ -90,4 +90,4 @@ validators/
 
 ## 경로 검사는 양쪽으로 확인
 
-화면과 할 수 있는 일을 맞춰 보는 검사를 만들었으면, 할 수 있는 일보다 적은 화면과 많은 화면을 하나씩 만들어 둘 다 실패하는지 본다.
+화면과 할 수 있는 일을 대조하는 검사를 만들었으면, 할 수 있는 일보다 적은 화면과 많은 화면을 하나씩 만들어 둘 다 실패하는지 본다.

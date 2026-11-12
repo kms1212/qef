@@ -2,7 +2,7 @@
 
 이 폴더의 파일은 아래 저장소에서 옮긴 것이다. 각 라이선스 원문은 `licenses/`에 있다. 「고침」이 있는 파일은 맨 위에 고친 곳을 적었다. 파일 안에서 가리키는 다른 스킬과 명령은 원 저장소에 있고 여기에는 없다.
 
-| 파일 | 원본 (저장소, 커밋, 경로) | 라이선스, 저작권 | 고침 |
+| 파일 | 원본 (저장소, 커밋, 경로) | 라이선스, 저작권 | 수정 |
 |---|---|---|---|
 | `impeccable-operate.md` | https://github.com/pbakaus/impeccable 924bbd1 `.claude/skills/impeccable/reference/operate.md` | Apache-2.0, Copyright 2025 Paul Bakaus, `licenses/impeccable-LICENSE` | 있음 |
 | `owl-law-of-similarity.md` | https://github.com/owl-listener/designer-skills 9a6930c `ui-design/skills/law-of-similarity/SKILL.md` | MIT, Copyright (c) 2026 MC Dean, `licenses/owl-LICENSE` | 없음 |
