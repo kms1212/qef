@@ -75,6 +75,15 @@
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job-gate.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash|Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/skill-gate.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [

@@ -4,9 +4,9 @@
 
 ## 결론
 
-- 네 방법 모두 「기준 목록에 대 보는 검사」다. heuristic evaluation과 Shneiderman의 규칙, ISO 9241-110은 무엇에 대조할지를 주고, cognitive walkthrough는 과업 단계마다 물을 질문을 준다.
+- 네 방법 모두 「기준 목록에 대조해 보는 검사」다. heuristic evaluation과 Shneiderman의 규칙, ISO 9241-110은 무엇에 대조할지를 주고, cognitive walkthrough는 과업 단계마다 물을 질문을 준다.
 - 잘 잡는 것: 일관성(문구·배치·동작), 상태 표시, 화면에 보이는 정보의 과잉, 사용자 말과 다른 용어, 학습 단계에서 행동이 보이는지.
-- 놓치는 것: 업무(도메인) 지식이 있어야 보이는 문제, 실제 사용 빈도에 따라 갈리는 문제, 빠진 기능. 평가자 한 명은 문제의 약 3분의 1만 찾고, 도메인을 아는 사용성 전문가가 가장 잘 찾는다. 예측의 상당수는 실제 사용자에게서 확인되지 않는다(거짓 양성 또는 드문 문제).
+- 놓치는 것: 업무(도메인) 지식이 있어야 보이는 문제, 실제 사용 빈도에 따라 달라지는 문제, 빠진 기능. 평가자 한 명은 문제의 약 3분의 1만 찾고, 도메인을 아는 사용성 전문가가 가장 잘 찾는다. 예측의 상당수는 실제 사용자에게서 확인되지 않는다(거짓 양성 또는 드문 문제).
 
 ## Nielsen 10 heuristics와 heuristic evaluation
 
@@ -32,7 +32,7 @@
 
 ## heuristic evaluation의 거짓 양성과 놓침
 
-- [Cockton & Woolrych, Understanding inspection methods (2001)](https://researchportal.northumbria.ac.uk/en/publications/understanding-inspection-methods-lessons-from-an-assessment-of-he/) — 검색 요약만(초록). 99명의 분석자가 낸 예측의 약 65%가 사용자 테스트에서 확인되지 않았다고 한다. 더 효과적인 자원은 사용자·과업·도메인·그 앱에 대한 지식이라고 결론.
+- [Cockton & Woolrych, Understanding inspection methods (2001)](https://researchportal.northumbria.ac.uk/en/publications/understanding-inspection-methods-lessons-from-an-assessment-of-he/) — 검색 요약만(초록). 99명의 분석자가 낸 예측의 약 65%가 사용자 테스트에서 확인되지 않았다고 한다. 더 효과적인 리소스는 사용자·과업·도메인·그 앱에 대한 지식이라고 결론.
 - [MeasuringU, How Effective are Heuristic Evaluations?](https://measuringu.com/?p=133) — 본문 확인.
   - 다섯 연구 평균으로 사용자 테스트 문제의 약 49%를 heuristic evaluation이 놓쳤다.
   - 사용자가 겪지 않은 지적은 평균 34%(9%~46%). 저자는 이를 거짓 양성보다 드문 문제로 보자고 한다: 「less frequent or "long-tail" issues than false positives」
@@ -55,10 +55,10 @@
 
 ## ISO 9241-110:2020 Interaction principles
 
-- [ISO 9241-110:2020 견본(iTeh)](https://cdn.standards.iteh.ai/samples/75258/83c8cf072187487686645aad04eff40e/ISO-9241-110-2020.pdf) — 견본 PDF를 내려받아 pdftotext로 직접 읽음(4절 개요까지). [ISO 카탈로그](https://www.iso.org/standard/75258.html)는 403.
+- [ISO 9241-110:2020 샘플(iTeh)](https://cdn.standards.iteh.ai/samples/75258/83c8cf072187487686645aad04eff40e/ISO-9241-110-2020.pdf) — 견본 PDF를 다운로드해 pdftotext로 직접 읽음(4절 개요까지). [ISO 카탈로그](https://www.iso.org/standard/75258.html)는 403.
   - 원칙 7개: Suitability for the user's tasks, Self-descriptiveness, Conformity with user expectations, Learnability, Controllability, Use error robustness, User engagement. 2006판의 individualization은 controllability에 합쳐졌고 user engagement가 새로 생겼다.
   - Suitability: 기능이 「based on the task characteristics (rather than the technology chosen」
   - Conformity: 동작이 「predictable based on the context of use and commonly accepted conventions」
   - NOTE: 과업 적합성은 「unnecessary steps and unnecessary information」을 피하는 것을 포함한다.
   - 권고 하나를 적용했다고 원칙이 충족되는 것은 아니다. 원칙들은 겹치고 서로 맞바꿔야 할 때가 있다.
-  - 5.3.3에 「consistency (internal and external)」 권고 묶음이 있다(목차로 확인, 본문은 견본 밖).
+  - 5.3.3에 「consistency (internal and external)」 권고 그룹이 있다(목차로 확인, 본문은 샘플 밖).

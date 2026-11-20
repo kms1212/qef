@@ -172,7 +172,7 @@ read_lines "$work/doc.md" 1 7 7
 expect 'a subagent cannot write the goal' "$(hook job-gate.sh "{$(common),\"agent_id\":\"a\",\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$d/goal.md\"}}")" 'deny'
 expect 'the source list asks' "$(write_to "$d/sources.txt")" '"ask"'
 
-printf '# 고정 목표\n\n## 일의 이유\n구조가 무너졌다\n' > "$d/goal.md"
+printf '# 고정 목표\n\n## 배경\n구조가 무너졌다\n' > "$d/goal.md"
 expect 'structure needs both design skills' "$(write_to "$d/structure.md")" 'qef:model'
 printf '{"input":{"skill":"qef:model"}}\n' > "$tmp/transcript.jsonl"
 expect 'structure needs layout too' "$(write_to "$d/structure.md")" 'qef:model'
@@ -244,6 +244,75 @@ expect 'closing moves the job' "$(close_job j)" '닫아'
 [ ! -e "$work/.qef/archive/$(date +%Y-%m-%d)-j/.reads" ] || fail 'closing should drop the read log'
 expect_none 'a closed job gates nothing' "$(write_to "$work/a.ts")"
 expect_none 'a closed job injects nothing' "$(session_start compact s1)"
+
+t="$tmp/skills.jsonl"
+skill_line() { printf '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Skill","input":{"skill":"%s"}}]}}\n' "$1" >> "$t"; }
+boundary() { printf '{"type":"system","subtype":"compact_boundary"}\n' >> "$t"; }
+called() { "$root/scripts/skill-called.sh" "$t" "$@"; }
+: > "$t"
+skill_line qef:workflow
+skill_line qef:dev
+called qef:dev || fail 'a call without compaction counts'
+called qef:dev qef:testing && fail 'every named skill must be called'
+boundary
+called qef:dev && fail 'a call before the last compaction does not count'
+printf '{"message":{"content":"<command-name>/qef:dev</command-name>"}}\n' >> "$t"
+called qef:dev || fail 'a typed command after compaction counts'
+called qef:workflow && fail 'workflow before compaction does not count either'
+"$root/scripts/skill-called.sh" "$tmp/none.jsonl" qef:dev && fail 'a missing transcript is not a call'
+
+sgate() { printf '{"session_id":"g","cwd":"%s","transcript_path":"%s","hook_event_name":"PreToolUse","tool_name":"Edit","tool_input":{"file_path":"%s"}%s}' "$work" "$t" "$1" "$2" | "$root/scripts/skill-gate.sh" 2>/dev/null; }
+: > "$t"
+skill_line qef:workflow
+expect 'code needs dev' "$(sgate "$work/src/a.py")" 'qef:dev'
+expect 'a test file needs testing too' "$(sgate "$work/engine/tests/test_a.py")" 'qef:testing'
+expect 'a test name needs testing' "$(sgate "$work/src/a.test.ts")" 'qef:testing'
+expect_none 'prose is left to project rules' "$(sgate "$work/isa/chapter.tex")"
+expect_none 'qef files are free' "$(sgate "$work/.qef/j/progress.md")"
+expect_none 'files outside the project are free' "$(sgate "$tmp/elsewhere.py")"
+expect_none 'a subagent is not gated' "$(sgate "$work/src/a.py" ',"agent_id":"a"')"
+skill_line qef:dev
+expect_none 'dev opens code' "$(sgate "$work/src/a.py")"
+case "$(sgate "$work/engine/tests/test_a.py")" in *qef:dev*) fail 'dev is already called' ;; esac
+expect 'tests still need testing' "$(sgate "$work/engine/tests/test_a.py")" 'qef:testing'
+echo '{}' > "$work/package.json"
+expect 'a JS project needs js-ts' "$(sgate "$work/src/a.ts")" 'qef:js-ts'
+rm "$work/package.json"
+bgate() { printf '{"session_id":"g","cwd":"%s","transcript_path":"%s","hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"%s"}}' "$work" "$t" "$1" | "$root/scripts/skill-gate.sh" 2>/dev/null; }
+boundary
+expect 'compaction asks for dev again' "$(sgate "$work/src/a.py")" 'qef:dev'
+while IFS= read -r command; do
+  expect "a shell write needs dev: $command" "$(bgate "$command")" 'qef:dev'
+done <<'EOF'
+sed -i '' 's/a/b/' src/a.py
+perl -pi -e 's/a/b/' src/a.py
+python3 - <<'PY'\nfrom pathlib import Path\nPath('src/a.py').write_text('x')\nPY
+python3 -c \"open('src/a.py','w').write('x')\"
+python3 -c \"open(p, \\\"w\\\")\"
+cat > src/a.py <<'PY'\nx\nPY
+printf x | tee src/a.py
+EOF
+while IFS= read -r command; do
+  expect_none "reading is not gated: $command" "$(bgate "$command")"
+done <<'EOF'
+sed -n 1,5p src/a.py
+grep -i open src/a.py
+cat src/a.py
+git status
+EOF
+expect 'a shell write to tests needs testing' "$(bgate "sed -i '' 's/a/b/' engine/tests/test_a.py")" 'qef:testing'
+skill_line qef:dev
+expect_none 'dev opens shell writes' "$(bgate "sed -i '' 's/a/b/' src/a.py")"
+: > "$t"
+skill_line qef:dev
+expect_none 'a session outside qef is not gated' "$(sgate "$work/src/a.py")"
+
+: > "$t"
+skill_line qef:workflow
+skill_line qef:testing
+boundary
+expect 'compaction lists the skills called before it' "$(restore SessionStart compact "$t")" '호출한 스킬: qef:testing.'
+case "$(restore SessionStart compact "$t")" in *'qef:workflow,'* | *', qef:workflow'*) fail 'workflow itself is not listed' ;; esac
 
 [ "$failures" -eq 0 ] && { echo 'all passed'; exit 0; }
 printf '%s failed\n' "$failures"

@@ -18,10 +18,10 @@ if [ "$1" = open ] || [ "$1" = add ]; then
       dir="$qef/$name"
       [ -f "$dir/goal.md" ] && { echo "이미 있는 일입니다: $name" >&2; exit 1; }
       mkdir -p "$dir"
-      printf '# 고정 목표\n\n## 일의 이유\n\n## 일의 성격\n\n## 사용자 원문\n\n## 금지와 전제\n\n## 요구사항\n\n## 업무 사실\n\n## 범위 밖\n\n## 후보\n\n## 정해지지 않은 것\n' > "$dir/goal.md"
+      printf '# 고정 목표\n\n## 배경\n\n## 작업 유형\n\n## 사용자 원문\n\n## 금지와 전제\n\n## 요구사항\n\n## 비즈니스 규칙\n\n## 범위 밖\n\n## 후보\n\n## 정해지지 않은 것\n' > "$dir/goal.md"
       printf '# 구조 목표\n' > "$dir/structure.md"
       printf '# 진행 상황\n' > "$dir/progress.md"
-      printf '# 사고 기록\n' > "$dir/reasoning.md"
+      printf '# 결정 기록\n' > "$dir/reasoning.md"
       printf '# 끝까지 읽을 자료. 한 줄에 경로 하나, 저장소 루트 기준.\n' > "$dir/sources.txt"
       exclude=$(git -C "$root" rev-parse --git-path info/exclude 2>/dev/null)
       if [ -n "$exclude" ]; then
@@ -32,7 +32,7 @@ if [ "$1" = open ] || [ "$1" = add ]; then
       echo "일을 열고 이 세션을 묶었습니다: $dir"
       ;;
     add)
-      bound_job || { echo '이 세션은 어느 일에도 묶이지 않았습니다.' >&2; exit 1; }
+      bound_job || { echo '이 세션은 어느 일에도 결합되지 않았습니다.' >&2; exit 1; }
       for source in "$@"; do
         path=$(real_path "$source")
         [ -f "$path" ] || { echo "파일이 없습니다: $source" >&2; exit 1; }
@@ -78,7 +78,7 @@ context() {
   files='goal.md structure.md'
   [ "$1" != full ] || files="$files progress.md"
   late=$(oversized $files)
-  printf '이 세션은 qef 일 「%s」에 묶여 있습니다. 파일 자리: %s\n\n' "$job" "$dir"
+  printf '이 세션은 qef 일 「%s」에 결합돼 있습니다. 파일 위치: %s\n\n' "$job" "$dir"
   for name in $files; do
     case " $late " in
       *" $name "*) ;;
@@ -91,7 +91,7 @@ context() {
     unread=$(unread_sources)
     [ -z "$unread" ] || printf '아직 끝까지 읽지 않은 자료입니다. Read로 읽기 전에는 구현과 구조 결정이 막힙니다.\n%s\n\n' "$unread"
     size=$(wc -c < "$dir/reasoning.md")
-    [ "$size" -le 65536 ] || printf '사고 기록이 %s바이트로 64KB를 넘었습니다. 일 전체에 걸치는 결론은 사용자 승인을 받아 goal.md로 올립니다.\n' "$size"
+    [ "$size" -le 65536 ] || printf '결정 기록이 %s바이트로 64KB를 넘었습니다. 일 전체에 걸치는 결론은 사용자 승인을 받아 goal.md로 올립니다.\n' "$size"
   fi
 }
 
@@ -105,7 +105,7 @@ enter() {
   fi
   jobs=$(open_jobs | paste -sd, - | sed 's/,/, /g')
   [ -n "$jobs" ] || return 0
-  printf '이 세션은 어느 qef 일에도 묶이지 않았습니다. 열린 일: %s. 일을 이으려면 /qef:workflow <일 이름>으로 부릅니다.\n' "$jobs"
+  printf '이 세션은 어느 qef 일에도 결합되지 않았습니다. 열린 일: %s. 일을 이으려면 /qef:workflow <일 이름>으로 호출합니다.\n' "$jobs"
 }
 
 close() {
@@ -129,7 +129,7 @@ close() {
   rm -f "$target/.reads"
   mv "$target" "$archived"
   [ -d "$sessions" ] && grep -lxF "$name" "$sessions"/* 2>/dev/null | while IFS= read -r mark; do rm -f "$mark"; done
-  printf '일 「%s」을 닫아 %s로 옮겼습니다. 아래 고정 목표에서 프로젝트 규칙으로 올릴 줄이 있으면 사용자에게 안을 보입니다.\n\n' "$name" "$archived"
+  printf '일 「%s」을 닫아 %s로 옮겼습니다. 아래 고정 목표에서 프로젝트 규칙으로 올릴 줄이 있으면 사용자에게 안을 표시합니다.\n\n' "$name" "$archived"
   cat "$archived/goal.md"
 }
 

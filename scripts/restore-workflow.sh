@@ -23,3 +23,7 @@ fi
 
 printf '이 세션은 qef:workflow를 지정해 진행 중입니다. 아래는 그 스킬 본문입니다.\n\n'
 awk 'n>=2 {print} /^---$/ {n++}' "${CLAUDE_PLUGIN_ROOT}/skills/workflow/SKILL.md"
+
+[ "$(field source)" = compact ] || exit 0
+called=$(grep -o '"skill":"[^"]*"' "$(field transcript_path)" 2>/dev/null | sed 's/"skill":"\(.*\)"/\1/' | grep -vx 'qef:workflow' | sort -u | paste -sd, - | sed 's/,/, /g')
+[ -z "$called" ] || printf '\ncompaction 전에 이 세션에서 호출한 스킬: %s. 이 스킬들이 맡는 일을 다시 할 때는 Skill로 다시 호출합니다.\n' "$called"

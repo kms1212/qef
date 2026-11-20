@@ -24,7 +24,7 @@ require_approval() {
   done
 }
 
-called_skill() { grep -Eq "\"skill\":\"qef:$1\"|<command-name>/?qef:$1</command-name>" "$(field transcript_path)" 2>/dev/null; }
+called_skill() { "$(dirname "$0")/skill-called.sh" "$(field transcript_path)" "qef:$1"; }
 
 tool=$(field tool_name)
 case "$tool" in
@@ -46,12 +46,12 @@ case "$tool" in
         ;;
       "$dir/goal.md")
         require_sources
-        decide ask "고정 목표를 씁니다. 일의 이유, 일의 성격, 요구사항의 출처를 보고 승인합니다."
+        decide ask "고정 목표를 씁니다. 배경, 작업 유형, 요구사항의 출처를 보고 승인합니다."
         ;;
       "$dir/structure.md")
         require_sources
         has_content "$dir/goal.md" || decide deny "고정 목표를 먼저 승인받아야 구조 목표를 쓸 수 있습니다."
-        called_skill model && called_skill layout || decide deny "이 세션에서 qef:model과 qef:layout을 부른 뒤에 구조 목표를 씁니다."
+        called_skill model && called_skill layout || decide deny "마지막 compaction 뒤에 qef:model과 qef:layout을 호출한 뒤에 구조 목표를 씁니다."
         decide ask "구조 목표를 씁니다. 타입 트리를 보고 승인합니다. 코드에 고정돼 지우는 변경이면 그것을 확인합니다."
         ;;
       "$qef"/*) exit 0 ;;

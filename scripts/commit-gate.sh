@@ -25,6 +25,6 @@ output=$(cd "$root" && printf '%s\n' "$files" | "$check" 2>&1)
 status=$?
 [ "$status" -eq 0 ] && exit 0
 
-printf 'qef 커밋 관문: .qef/commit-check가 코드 %s로 실패해 커밋을 막았습니다.\n' "$status" >&2
+printf 'qef 커밋 게이트: .qef/commit-check가 코드 %s로 실패해 커밋을 막았습니다.\n' "$status" >&2
 printf '%s\n' "$output" | tail -n 40 >&2
 exit 2
