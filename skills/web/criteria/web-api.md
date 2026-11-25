@@ -18,7 +18,7 @@ API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 리�
 
 - 도메인은 같은 계층의 다른 도메인 코드를 가져다 쓰지 않고, 다른 도메인의 테이블을 직접 읽거나 쓰지 않는다. 같은 도메인 안의 루트 컬렉션끼리는 코드를 함께 쓴다. 도메인들이 함께 쓰는 인프라 계층(DB 클라이언트, 인증 확인 등)은 도메인 아래에 두고, 인프라 계층은 도메인을 모른다.
 - 다른 도메인의 정보가 필요하면 응답에는 아이디만 넣고, 쓰는 쪽(웹, MCP 등)이 그 루트 컬렉션에서 가져온다. 이를 위해 루트 컬렉션마다 Batch Get과, 받을 필드를 고르는 `fields` 파라미터를 둔다.
-- 한 동작이 여러 도메인을 함께 바꿔야 할 것 같으면 설계를 다시 본다. 미리 만들지 않거나(필요할 때 아이디로 가리킨다), 쓰는 때에 확인하거나(상태를 전파하지 않고 읽을 때 판단한다), 늘 함께 바뀌는 것이면 `qef:layout`의 「패키지」대로 한 도메인으로 합친다.
+- 한 동작이 여러 도메인의 테이블이나 코드를 바꿔야 하면 설계를 다시 본다. 미리 만들지 않거나(필요할 때 아이디로 가리킨다), 쓰는 때에 확인하거나(상태를 전파하지 않고 읽을 때 판단한다), 늘 함께 바뀌는 것이면 `qef:layout`의 「패키지」대로 한 도메인으로 합친다.
 
 근거: Vaughn Vernon, "Effective Aggregate Design" Part II (위); Chris Richardson, "Pattern: Database per service" (https://microservices.io/patterns/data/database-per-service.html); JSON:API, "Sparse Fieldsets" (https://jsonapi.org/format/#fetching-sparse-fieldsets); Google AIP-157, "Partial responses" (https://google.aip.dev/157); Google AIP-231, "Batch methods: Get" (https://google.aip.dev/231).
 
