@@ -1,0 +1,8 @@
+{
+  "name": "qef",
+  "displayName": "QEF",
+  "description": "Quod erat faciendum: 모든 일의 기준. 켜면 hook이 세션과 subagent마다 qef.md를 넣는다.",
+  "author": {
+    "name": "kms1212"
+  }
+}
