@@ -2,11 +2,11 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "compact|clear",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/restore-workflow.sh"
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/work.sh"
           }
         ]
       },
@@ -18,16 +18,31 @@
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
           }
         ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}\"/scripts/carryover.py"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}\"/scripts/carryover.py"
+          }
+        ]
       }
     ],
     "SessionEnd": [
       {
         "matcher": "clear",
         "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/restore-workflow.sh"
-          },
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
@@ -37,7 +52,7 @@
     ],
     "UserPromptExpansion": [
       {
-        "matcher": "^(qef:)?(workflow|close)$",
+        "matcher": "^(qef:)?(job|close)$",
         "hooks": [
           {
             "type": "command",
@@ -49,6 +64,10 @@
     "SubagentStart": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/work.sh"
+          },
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
@@ -64,6 +83,19 @@
             "type": "command",
             "if": "Bash(git *)",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/commit-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/git-ask.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/agent-gate.sh"
           }
         ]
       },
@@ -93,10 +125,6 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/job.sh"
-          },
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/restore-workflow.sh"
           }
         ]
       },
@@ -106,6 +134,15 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/read-log.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__ccd_session__start_session",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/scripts/after-start-session.sh"
           }
         ]
       }

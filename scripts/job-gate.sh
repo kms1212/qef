@@ -69,7 +69,7 @@ case "$tool" in
     ;;
   Bash)
     [ -z "$agent" ] || exit 0
-    command=$(printf '%s' "$input" | sed -nE 's/.*"command":"(([^"\\]|\\.)*)".*/\1/p')
+    command=$(command_field)
     printf '%s' "$command" | grep -Eq '(^|[ |;&(])(cut|head|tail|sed|grep|egrep|fgrep|rg|awk)( |$)' || exit 0
     sources | while IFS= read -r source; do
       printf '%s' "$command" | grep -qF "$(basename "$source")" || continue

@@ -11,7 +11,7 @@ fail() {
 }
 
 repo="$tmp/repo"
-mkdir -p "$repo/.qef"
+mkdir -p "$repo/.claude/qef"
 git -C "$repo" init -q
 git -C "$repo" -c user.name=t -c user.email=t@t commit -q --allow-empty -m init
 echo one > "$repo/tracked"
@@ -21,12 +21,12 @@ echo two >> "$repo/tracked"
 echo staged > "$repo/staged"
 git -C "$repo" add staged
 
-cat > "$repo/.qef/commit-check" <<EOF
+cat > "$repo/.claude/qef/commit-check" <<EOF
 #!/bin/sh
 cat > "$tmp/seen"
 exit \$(cat "$tmp/rc")
 EOF
-chmod +x "$repo/.qef/commit-check"
+chmod +x "$repo/.claude/qef/commit-check"
 
 # The command argument is written as it appears inside the hook's JSON, escapes included.
 gate() {
@@ -82,26 +82,6 @@ expect_files 'git commit -m \"x\" -a' 'staged tracked '
 expect_files 'git commit --all -m x' 'staged tracked '
 expect_files 'git add \"-a\" && git commit -m x' 'staged '
 
-invoked="$tmp/invoked.jsonl"
-other="$tmp/other.jsonl"
-printf '{"name":"Skill","input":{"skill":"qef:workflow"}}\n' > "$invoked"
-printf '{"name":"Skill","input":{"skill":"qef:dev"}}\n' > "$other"
-
-restore() {
-  printf '{"hook_event_name":"%s","source":"%s","reason":"%s","cwd":"%s","transcript_path":"%s"}' "$1" "$2" "$2" "$repo" "$3" \
-    | CLAUDE_PLUGIN_ROOT="$root" CLAUDE_PLUGIN_DATA="$tmp/data" "$root/scripts/restore-workflow.sh"
-}
-
-[ -n "$(restore SessionStart compact "$invoked")" ] || fail 'compact in a qef session should restore'
-[ -z "$(restore SessionStart compact "$other")" ] || fail 'compact outside qef should stay silent'
-
-restore SessionEnd clear "$invoked"
-[ -n "$(restore SessionStart clear "$tmp/new.jsonl")" ] || fail '/clear in a qef session should restore'
-[ -z "$(restore SessionStart clear "$tmp/new.jsonl")" ] || fail 'the /clear mark should work once'
-
-restore SessionEnd clear "$other"
-[ -z "$(restore SessionStart clear "$tmp/new.jsonl")" ] || fail '/clear outside qef should stay silent'
-
 work="$tmp/work"
 mkdir -p "$work"
 git -C "$work" init -q
@@ -127,7 +107,7 @@ d="$work/.qef/j"
 
 expect_none 'an unbound session is not gated' "$(write_to "$work/a.ts")"
 expect_none 'an unbound session is not gated (agent)' "$(pre Agent '{"subagent_type":"qef:implementer","prompt":"x"}')"
-enter() { hook job.sh "{$(common "$2"),\"hook_event_name\":\"UserPromptExpansion\",\"command_name\":\"qef:workflow\",\"command_args\":\"$1\"}"; }
+enter() { hook job.sh "{$(common "$2"),\"hook_event_name\":\"UserPromptExpansion\",\"command_name\":\"qef:job\",\"command_args\":\"$1\"}"; }
 expect_none 'nothing is open, entering says nothing' "$(enter nope)"
 
 job open s1 j >/dev/null || fail 'open should work'
@@ -216,7 +196,7 @@ expect 'an oversized progress is left to Read' "$(enter j s8)" '지금 Read로 �
 expect_none 'an oversized progress does not block code' "$(write_to "$work/a.ts" s8)"
 printf '# 진행 상황\n' > "$d/progress.md"
 expect 'words after the job name are ignored' "$(enter 'j 이어서 진행' s7)" '구조가 무너졌다'
-expect 'entering by a tool call works too' "$(hook job.sh "{$(common s4),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Skill\",\"tool_input\":{\"skill\":\"qef:workflow\",\"args\":\"j\"},\"tool_response\":{\"success\":true}}")" '구조가 무너졌다'
+expect 'entering by a tool call works too' "$(hook job.sh "{$(common s4),\"hook_event_name\":\"PostToolUse\",\"tool_name\":\"Skill\",\"tool_input\":{\"skill\":\"qef:job\",\"args\":\"j\"},\"tool_response\":{\"success\":true}}")" '구조가 무너졌다'
 expect 'a wrong name lists open jobs and does not create' "$(enter wrong s5)" '열린 일: j'
 [ ! -e "$work/.qef/wrong" ] || fail 'a wrong name should not create a job'
 [ ! -e "$work/.qef/.sessions/s5" ] || fail 'a wrong name should not bind'
@@ -250,7 +230,6 @@ skill_line() { printf '{"type":"assistant","message":{"content":[{"type":"tool_u
 boundary() { printf '{"type":"system","subtype":"compact_boundary"}\n' >> "$t"; }
 called() { "$root/scripts/skill-called.sh" "$t" "$@"; }
 : > "$t"
-skill_line qef:workflow
 skill_line qef:dev
 called qef:dev || fail 'a call without compaction counts'
 called qef:dev qef:testing && fail 'every named skill must be called'
@@ -258,12 +237,10 @@ boundary
 called qef:dev && fail 'a call before the last compaction does not count'
 printf '{"message":{"content":"<command-name>/qef:dev</command-name>"}}\n' >> "$t"
 called qef:dev || fail 'a typed command after compaction counts'
-called qef:workflow && fail 'workflow before compaction does not count either'
 "$root/scripts/skill-called.sh" "$tmp/none.jsonl" qef:dev && fail 'a missing transcript is not a call'
 
 sgate() { printf '{"session_id":"g","cwd":"%s","transcript_path":"%s","hook_event_name":"PreToolUse","tool_name":"Edit","tool_input":{"file_path":"%s"}%s}' "$work" "$t" "$1" "$2" | "$root/scripts/skill-gate.sh" 2>/dev/null; }
 : > "$t"
-skill_line qef:workflow
 expect 'code needs dev' "$(sgate "$work/src/a.py")" 'qef:dev'
 expect 'a test file needs testing too' "$(sgate "$work/engine/tests/test_a.py")" 'qef:testing'
 expect 'a test name needs testing' "$(sgate "$work/src/a.test.ts")" 'qef:testing'
@@ -304,32 +281,66 @@ expect 'a shell write to tests needs testing' "$(bgate "sed -i '' 's/a/b/' engin
 skill_line qef:dev
 expect_none 'dev opens shell writes' "$(bgate "sed -i '' 's/a/b/' src/a.py")"
 : > "$t"
-skill_line qef:dev
-expect_none 'a session outside qef is not gated' "$(sgate "$work/src/a.py")"
+expect 'a session that called no qef skill is gated too' "$(sgate "$work/src/a.py")" 'qef:dev'
 
-: > "$t"
-skill_line qef:workflow
-skill_line qef:testing
-boundary
-expect 'compaction lists the skills called before it' "$(restore SessionStart compact "$t")" '호출한 스킬: qef:testing.'
-case "$(restore SessionStart compact "$t")" in *'qef:workflow,'* | *', qef:workflow'*) fail 'workflow itself is not listed' ;; esac
+mkdir -p "$work/.claude/qef"
+printf '# skill\tpath\n\nste80-humanizer\t^isa/.*\\.tex$\n' > "$work/.claude/qef/required-skills"
+expect 'a required skill gates matching prose' "$(sgate "$work/isa/chapter.tex")" 'ste80-humanizer'
+expect_none 'a required skill leaves other prose alone' "$(sgate "$work/docs/chapter.tex")"
+expect 'a required skill gates a shell write to a matching path' "$(bgate "sed -i '' 's/a/b/' isa/chapter.tex")" 'ste80-humanizer'
+expect_none 'a shell read of a matching path is not gated' "$(bgate "sed -n 1p isa/chapter.tex")"
+case "$(sgate "$work/isa/chapter.tex")" in *qef:dev*) fail 'prose still needs no stage skill' ;; esac
+skill_line ste80-humanizer
+expect_none 'calling the required skill opens the path' "$(sgate "$work/isa/chapter.tex")"
+rm "$work/.claude/qef/required-skills"
 
-attach() {
-  printf '{"hook_event_name":"PostToolUse","tool_name":"Skill","tool_input":{"skill":"%s"},"cwd":"%s","transcript_path":"%s"%s}' "$1" "$repo" "$2" "$3" \
-    | CLAUDE_PLUGIN_ROOT="$root" CLAUDE_PLUGIN_DATA="$tmp/data" "$root/scripts/restore-workflow.sh"
-}
-attached="$tmp/attached.jsonl"
-printf '{"name":"Skill","input":{"skill":"qef:dev"}}\n' > "$attached"
-out=$(attach qef:dev "$attached")
-expect 'a qef skill outside workflow attaches it' "$out" '## 단계 → 스킬'
-printf '%s' "$out" | python3 -I -c 'import json,sys; json.load(sys.stdin)' 2>/dev/null || fail 'the attach output should be hook JSON'
-printf '%s\n' "$out" >> "$attached"
-"$root/scripts/workflow-invoked.sh" "$attached" || fail 'an attached session counts as under workflow'
-expect_none 'an attached session is not attached again' "$(attach qef:dev "$attached")"
-expect_none 'a session under workflow is not attached' "$(attach qef:dev "$invoked")"
-expect_none 'workflow itself attaches nothing' "$(attach qef:workflow "$other")"
-expect_none 'other skills attach nothing' "$(attach superpowers:brainstorming "$other")"
-expect_none 'a subagent is not attached' "$(attach qef:dev "$other" ',"agent_id":"a"')"
+for event in SessionStart SubagentStart; do
+  printf '{"hook_event_name":"%s","session_id":"s","cwd":"%s","agent_id":"a","agent_type":"x"}' "$event" "$work" | "$root/scripts/work.sh" | python3 -I -c '
+import json, sys
+out = json.load(sys.stdin)["hookSpecificOutput"]
+text = out["additionalContext"]
+rules = open(sys.argv[1], encoding="utf-8").read().split("---\n", 2)[2]
+sys.exit(0 if out["hookEventName"] == sys.argv[2] and text.strip() == rules.strip() and len(text) <= 10000 else 1)
+' "$root/skills/work/SKILL.md" "$event" || fail "$event gets the whole qef:work body within the 10,000-character hook limit"
+done
+
+agate() { printf '{"session_id":"s","cwd":"%s","hook_event_name":"PreToolUse","tool_name":"Agent","tool_input":{%s"prompt":"x"}}' "$work" "$1" | "$root/scripts/agent-gate.sh"; }
+for type in general-purpose Explore Plan claude; do
+  expect "the built-in $type agent is denied" "$(agate "\"subagent_type\":\"$type\",")" '"deny"'
+done
+expect 'an agent call without a type is denied' "$(agate '')" '"deny"'
+expect_none 'qef:general is allowed' "$(agate '"subagent_type":"qef:general",')"
+expect_none 'a fork is allowed' "$(agate '"subagent_type":"fork",')"
+
+ask() { printf '{"session_id":"s","cwd":"%s","tool_name":"Bash","tool_input":{"command":"%s"}}' "$work" "$1" | "$root/scripts/git-ask.sh"; }
+while IFS= read -r command; do
+  expect "asks: $command" "$(ask "$command")" '"ask"'
+done <<'EOF'
+git push origin main
+git -C sub push
+echo done && git reset --hard
+git add a\ngit merge b
+git tag v1
+git stash
+docker compose up -d
+EOF
+while IFS= read -r command; do
+  expect_none "does not ask: $command" "$(ask "$command")"
+done <<'EOF'
+git push --dry-run
+git status
+git tag
+git stash list
+git branch
+EOF
+
+transcript="$tmp/long.jsonl"
+for n in $(seq 1 30); do
+  printf '{"type":"user","timestamp":"2026-11-25T00:00:00","message":{"content":"%s"}}\n' "$(seq 1 200 | tr '\n' ' ')" >> "$transcript"
+done
+printf '{"hook_event_name":"SessionStart","source":"compact","transcript_path":"%s"}' "$transcript" \
+  | CLAUDE_PLUGIN_DATA="$tmp/data" python3 "$root/scripts/carryover.py" >/dev/null
+ls "$tmp/data/carryover/"*.md >/dev/null 2>&1 || fail 'carried-over messages past the inline cap are kept in the plugin data folder'
 
 [ "$failures" -eq 0 ] && { echo 'all passed'; exit 0; }
 printf '%s failed\n' "$failures"

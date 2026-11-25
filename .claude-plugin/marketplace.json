@@ -7,7 +7,7 @@
     {
       "name": "qef",
       "source": "./",
-      "description": "Quod erat faciendum: 개발 일의 작업 방식과 구조 판단 기준. 개발 일을 받으면 입구 스킬 qef:workflow부터 호출한다."
+      "description": "Quod erat faciendum: 모든 일의 작업 방식과 구조 판단 기준. 켜면 hook이 매 세션 작업 방식(qef:work)을 넣고, output style이 응답 방식을 정한다."
     }
   ]
 }

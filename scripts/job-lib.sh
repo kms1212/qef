@@ -1,7 +1,5 @@
 # Shared by the job scripts. A session is under a job only if .qef/.sessions/<session id> names one.
-input=${job_input:-$(cat)}
-
-field() { printf '%s' "$input" | sed -n "s/.*\"$1\":\"\\([^\"]*\\)\".*/\\1/p"; }
+. "$(dirname "$0")/hook-lib.sh"
 
 event=$(field hook_event_name)
 session=$(field session_id)
@@ -11,10 +9,6 @@ root=$(git -C "${cwd:-.}" rev-parse --show-toplevel 2>/dev/null) || root=$cwd
 root=$(cd "${root:-.}" 2>/dev/null && pwd -P) || exit 0
 qef="$root/.qef"
 sessions="$qef/.sessions"
-
-json_escape() {
-  awk 'BEGIN { ORS = "" } { gsub(/\\/, "\\\\"); gsub(/"/, "\\\""); gsub(/\t/, "\\t"); gsub(/\r/, ""); if (NR > 1) print "\\n"; print }'
-}
 
 bound_job() {
   [ -f "$sessions/$session" ] || return 1

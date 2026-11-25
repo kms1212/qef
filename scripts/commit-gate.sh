@@ -1,17 +1,16 @@
 #!/bin/sh
 # Blocks git commit when the project's deterministic check fails. Judgment calls do not belong here.
-input=$(cat)
+. "$(dirname "$0")/hook-lib.sh"
 
 # Quoted text goes first so a message or an echo cannot look like a command; then one simple command per line.
-commit_line=$(printf '%s' "$input" \
-  | sed -nE 's/.*"command":"(([^"\\]|\\.)*)".*/\1/p' \
+commit_line=$(command_field \
   | sed -e 's/\\\\/ /g' -e 's/\\"/"/g' -e 's/\\n/;/g' -e 's/\\t/ /g' -e 's/"[^"]*"//g' -e "s/'[^']*'//g" \
   | tr ';&|' '\n' \
   | grep -E '^[[:space:]$({]*([A-Za-z_][A-Za-z0-9_]*=[^ ]* +)*git( +-[^ ]+( +[^- ][^ ]*)?)* +commit([ )]|$)') || exit 0
 
-cwd=$(printf '%s' "$input" | sed -n 's/.*"cwd":"\([^"]*\)".*/\1/p')
+cwd=$(field cwd)
 root=$(git -C "${cwd:-.}" rev-parse --show-toplevel 2>/dev/null) || exit 0
-check="$root/.qef/commit-check"
+check="$root/.claude/qef/commit-check"
 
 [ -x "$check" ] || exit 0
 
@@ -25,6 +24,6 @@ output=$(cd "$root" && printf '%s\n' "$files" | "$check" 2>&1)
 status=$?
 [ "$status" -eq 0 ] && exit 0
 
-printf 'qef 커밋 게이트: .qef/commit-check가 코드 %s로 실패해 커밋을 막았습니다.\n' "$status" >&2
+printf 'qef 커밋 게이트: .claude/qef/commit-check가 코드 %s로 실패해 커밋을 막았습니다.\n' "$status" >&2
 printf '%s\n' "$output" | tail -n 40 >&2
 exit 2

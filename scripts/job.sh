@@ -6,7 +6,7 @@ if [ "$1" = open ] || [ "$1" = add ]; then
   command=$1
   session_arg=$2
   shift 2
-  job_input=$(printf '{"session_id":"%s","cwd":"%s"}' "$session_arg" "$PWD")
+  hook_input=$(printf '{"session_id":"%s","cwd":"%s"}' "$session_arg" "$PWD")
   . "$scripts/job-lib.sh"
   mkdir -p "$sessions"
   case "$command" in
@@ -105,7 +105,7 @@ enter() {
   fi
   jobs=$(open_jobs | paste -sd, - | sed 's/,/, /g')
   [ -n "$jobs" ] || return 0
-  printf '이 세션은 어느 qef 일에도 결합되지 않았습니다. 열린 일: %s. 일을 이으려면 /qef:workflow <일 이름>으로 호출합니다.\n' "$jobs"
+  printf '이 세션은 어느 qef 일에도 결합되지 않았습니다. 열린 일: %s. 일을 이으려면 /qef:job <일 이름>으로 호출합니다.\n' "$jobs"
 }
 
 close() {
@@ -136,13 +136,13 @@ close() {
 case "$event" in
   UserPromptExpansion)
     case "$(field command_name)" in
-      qef:workflow | workflow) enter "$(field command_args)" | emit ;;
+      qef:job | job) enter "$(field command_args)" | emit ;;
       qef:close | close) close "$(field command_args)" | emit ;;
     esac
     ;;
   PostToolUse)
     [ -z "$agent" ] || exit 0
-    [ "$(field skill)" = qef:workflow ] || exit 0
+    [ "$(field skill)" = qef:job ] || exit 0
     enter "$(field args)" | emit
     ;;
   SessionStart)
