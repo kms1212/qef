@@ -1,5 +1,5 @@
 {
-  "name": "qef-local",
+  "name": "qef",
   "owner": {
     "name": "kms1212"
   },
@@ -7,7 +7,7 @@
     {
       "name": "qef",
       "source": "./",
-      "description": "Quod erat faciendum: 모든 일의 기준. 켜면 hook이 세션과 subagent마다 qef.md를 넣는다."
+      "description": "Quod erat faciendum: 상황마다 불러 쓰는 판단 기준 skill 묶음."
     }
   ]
 }
