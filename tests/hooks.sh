@@ -314,6 +314,23 @@ boundary
 expect 'compaction lists the skills called before it' "$(restore SessionStart compact "$t")" '호출한 스킬: qef:testing.'
 case "$(restore SessionStart compact "$t")" in *'qef:workflow,'* | *', qef:workflow'*) fail 'workflow itself is not listed' ;; esac
 
+attach() {
+  printf '{"hook_event_name":"PostToolUse","tool_name":"Skill","tool_input":{"skill":"%s"},"cwd":"%s","transcript_path":"%s"%s}' "$1" "$repo" "$2" "$3" \
+    | CLAUDE_PLUGIN_ROOT="$root" CLAUDE_PLUGIN_DATA="$tmp/data" "$root/scripts/restore-workflow.sh"
+}
+attached="$tmp/attached.jsonl"
+printf '{"name":"Skill","input":{"skill":"qef:dev"}}\n' > "$attached"
+out=$(attach qef:dev "$attached")
+expect 'a qef skill outside workflow attaches it' "$out" '## 단계 → 스킬'
+printf '%s' "$out" | python3 -I -c 'import json,sys; json.load(sys.stdin)' 2>/dev/null || fail 'the attach output should be hook JSON'
+printf '%s\n' "$out" >> "$attached"
+"$root/scripts/workflow-invoked.sh" "$attached" || fail 'an attached session counts as under workflow'
+expect_none 'an attached session is not attached again' "$(attach qef:dev "$attached")"
+expect_none 'a session under workflow is not attached' "$(attach qef:dev "$invoked")"
+expect_none 'workflow itself attaches nothing' "$(attach qef:workflow "$other")"
+expect_none 'other skills attach nothing' "$(attach superpowers:brainstorming "$other")"
+expect_none 'a subagent is not attached' "$(attach qef:dev "$other" ',"agent_id":"a"')"
+
 [ "$failures" -eq 0 ] && { echo 'all passed'; exit 0; }
 printf '%s failed\n' "$failures"
 exit 1
