@@ -53,4 +53,4 @@ Playwright의 `test.describe.serial`은 쓰지 않는다. 하나가 실패하면
 
 ## 포맷과 lint
 
-프로젝트의 포매터와 lint를 쓴다. 커밋 게이트에 넣을 때는 `qef:finish`를 따른다.
+프로젝트의 포매터와 lint를 쓴다. 커밋 게이트에 넣을 때는 `qef:commit`을 따른다.

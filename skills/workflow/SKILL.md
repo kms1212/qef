@@ -28,7 +28,8 @@ allowed-tools: Bash(${CLAUDE_PLUGIN_ROOT}/scripts/job.sh *)
 | 오류, 예상 밖 동작의 원인을 찾는다 | `investigate` |
 | 이미 있는 코드의 이름·위치·구조를 바꾸거나 옛 것을 새 것으로 바꾼다 | `refactor` |
 | 사용자가 구조 평가를 시켰거나, 재작성 여부를 사용자에게 물어야 한다 | `structure-review` |
-| 완료를 말하려 하거나, 사용자가 커밋·merge·PR을 시켰다 | `finish` |
+| 사용자가 커밋을 시켰다 | `commit` |
+| 완료를 말하려 하거나, 사용자가 merge·PR을 시켰다 | `finish` |
 | 웹 백엔드 API나 브라우저 프론트엔드의 구조를 정하거나 바꾼다 | `web` |
 | 저장소에 `package.json`이나 `tsconfig.json`이 있다 | `js-ts` |
 
