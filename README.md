@@ -26,6 +26,7 @@ QEF는 훅을 쓰지 않습니다. 설치하면 skill만 추가됩니다.
 |---|---|---|
 | `qef:dev` | 코드를 읽거나 쓰기 전 | 구조 판단의 기준, 요청하지 않은 것을 만들기 전의 허가, 재사용과 의존, 중복과 노출, 코드를 바꾼 뒤의 보고 |
 | `qef:model` | 타입, 클래스, enum, DB 필드를 만들거나 바꾸기 전 | 개념과 타입 관계, 값을 데이터와 코드 중 어디에 둘지, 업무에서 가져오는 관계 |
+| `qef:db` | 테이블, 컬럼, 관계, 인덱스를 정하거나 바꾸기 전, DB를 읽고 쓰는 코드를 쓰기 전 | 업무 관계와 기록용 참조 가르기, 역할로 짓는 관계 이름, schema를 개념별로 묶고 같은 순서로 쓰기, 조회 방식, ORM relation 선언 |
 | `qef:layout` | 파일, 모듈, 디렉터리를 만들거나 옮기기 전, 의존 방향이나 데이터 흐름이나 내비게이션 경로를 바꾸기 전 | 경계와 배치를 나누는 기준, 의존 규칙을 검사로 두는 방법 |
 | `qef:testing` | 테스트를 쓰거나 고치기 전, 테스트가 실패했을 때 | 테스트를 돌리는 때, 실패를 다루는 순서, 테스트 계층, 격리, test double |
 | `qef:investigate` | 오류나 예상 밖 동작의 원인을 찾기 전 | 원인을 찾는 기법, 가설 세우기, 고치는 위치 |
@@ -76,6 +77,7 @@ QEF skill은 다른 skill과 플러그인을 가리킵니다. 없어도 QEF는 �
 | `design:ux-copy` | `qef:ux` | 화면 문구 쓰기와 리뷰 |
 | `design:accessibility-review` | `qef:ui` | 접근성 감사 |
 | `modern-web-guidance` | `qef:ui` | 브라우저 기능 구현 가이드 |
+| `design-postgres-tables`, `postgres-database-migration` | `qef:db` | PostgreSQL의 타입·제약 조건·인덱스, 마이그레이션 |
 | `githits-mcp`, `githits-package` | `qef:dev` | 오픈소스 구현과 패키지 찾기 |
 | `typescript-lsp`, `pyright-lsp` | `qef:js-ts`, `qef:python` | Claude Code의 정의·참조 찾기 |
 
