@@ -1,6 +1,6 @@
 ---
 name: investigate
-description: 오류나 예상 밖 동작의 원인을 찾기 전에 반드시 호출한다. 그때 쓰는 기법을 담는다.
+description: 오류나 예상 밖 동작의 원인을 찾기 전에 반드시 호출한다.
 ---
 
 # investigate
