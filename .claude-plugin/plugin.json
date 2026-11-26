@@ -1,7 +1,7 @@
 {
   "name": "qef",
   "displayName": "QEF",
-  "description": "Quod erat faciendum: 상황마다 불러 쓰는 판단 기준 skill 묶음. 저장소 준비(repo), 타입(model), 배치(layout), 코드(dev), 테스트(testing), 원인 찾기(investigate), 구조 바꾸기(refactor), 화면(ux, ui), 문서(doc), 웹(web), TS/JS(js-ts), Python(python), LaTeX(latex), Sail(sail).",
+  "description": "Quod erat faciendum: 상황마다 불러 쓰는 판단 기준 skill 묶음. 저장소 준비(repo), 타입(model), DB(db), 배치(layout), 코드(dev), 테스트(testing), 원인 찾기(investigate), 구조 바꾸기(refactor), 화면(ux, ui), 문서(doc), 웹(web), TS/JS(js-ts), Python(python), LaTeX(latex), Sail(sail).",
   "author": {
     "name": "kms1212"
   },
