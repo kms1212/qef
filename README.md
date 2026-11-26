@@ -25,7 +25,7 @@ QEF는 훅을 쓰지 않습니다. 설치하면 skill만 추가됩니다.
 | skill | 부르는 때 | 담는 것 |
 |---|---|---|
 | `qef:dev` | 코드를 읽거나 쓰기 전 | 구조 판단의 기준, 요청하지 않은 것을 만들기 전의 허가, 재사용과 의존, 중복과 노출, 코드를 바꾼 뒤의 보고 |
-| `qef:model` | 타입, 클래스, enum, DB 필드를 만들거나 바꾸기 전 | 개념과 타입 관계, 값을 데이터와 코드 중 어디에 둘지, 업무에서 가져오는 관계 |
+| `qef:model` | 타입, 클래스, enum, DB 필드를 만들거나 바꾸기 전, 값을 클래스·값·데이터 중 어디에 둘지 정하기 전 | 개념과 타입 관계, 값을 데이터와 코드 중 어디에 둘지, 업무에서 가져오는 관계 |
 | `qef:db` | 테이블, 컬럼, 관계, 인덱스를 정하거나 바꾸기 전, DB를 읽고 쓰는 코드를 쓰기 전 | 업무 관계와 기록용 참조 가르기, 역할로 짓는 관계 이름, schema를 개념별로 묶고 같은 순서로 쓰기, 조회 방식, ORM relation 선언 |
 | `qef:layout` | 파일, 모듈, 디렉터리를 만들거나 옮기기 전, 의존 방향이나 데이터 흐름이나 내비게이션 경로를 바꾸기 전 | 경계와 배치를 나누는 기준, 의존 규칙을 검사로 두는 방법 |
 | `qef:testing` | 테스트를 쓰거나 고치기 전, 테스트가 실패했을 때 | 테스트를 돌리는 때, 실패를 다루는 순서, 테스트 계층, 격리, test double |
@@ -34,7 +34,7 @@ QEF는 훅을 쓰지 않습니다. 설치하면 skill만 추가됩니다.
 | `qef:ux` | 사람이 쓰는 화면의 업무 흐름, 표시할 것, 순서, 입력, 문구를 정하거나 리뷰하기 전 | 화면 설계 순서, 화면에 둘 것을 고르는 기준, 이름과 문구, 권한과 화면의 대응 |
 | `qef:ui` | 사람이 쓰는 화면의 모양을 정하거나 리뷰하기 전(`qef:ux`와 함께) | 같은 종류의 모양, 강조, 정렬과 공간, 상태 설계 |
 | `qef:delegate` | subagent나 다른 세션에 일을 맡기기 전, 맡긴 일의 질문과 결과를 다루기 전 | 맡긴 쪽과 맡은 쪽의 역할, subagent 질문에 답하기, 할 일만 쓰는 지시, 일을 나누는 방식 |
-| `qef:rules` | 규칙, skill, 에이전트 지시문, 메모리를 쓰거나 고치기 전 | 규칙을 더하기 전에 따질 것, 규칙을 둘 자리, 사용자의 말을 바꿔 쓰지 않기, 평이하게 쓰기, 기록 정리 |
+| `qef:rules` | 규칙, skill, 에이전트 지시문, 메모리를 쓰거나 고치기 전, 지적을 받아 규칙을 바꾸려 하기 전 | 규칙을 더하기 전에 따질 것, 규칙을 둘 자리, 사용자의 말을 바꿔 쓰지 않기, 평이하게 쓰기, 기록 정리 |
 | `qef:web` | 웹 백엔드 API나 브라우저 프론트엔드의 구조를 정하거나 바꾸기 전 | API의 경로와 도메인 나누기, 입력과 오류, 프론트엔드의 코드와 상태 배치 |
 | `qef:doc` | 독자가 읽는 문서를 쓰거나 고치거나 리뷰하기 전 | 문서 종류에 맞는 문장, 산문·표·다이어그램·리스트를 고르는 기준, 표와 다이어그램을 만드는 방법, 용어, 참조, 문장 다듬기 skill 고르기 |
 | `qef:js-ts` | `package.json`이나 `tsconfig.json`이 있는 저장소에서 일하기 전, JS/TS를 들이기 전 | 코드 찾기와 바꾸기, 정적 분석, 테스트 도구 |
@@ -65,6 +65,30 @@ claude plugin marketplace update qef
 
 ```bash
 claude plugin update qef@qef
+```
+
+### OpenSpec 포크
+
+qef를 부르는 작업 절차는 OpenSpec 포크의 spec-driven schema에 있습니다. 포크는 npm에 따로 올라가 있지 않고 패키지 이름도 upstream과 같은 `@fission-ai/openspec`입니다. 그래서 npm에서 설치하면 qef를 부르지 않는 upstream schema가 깔립니다. 포크를 내려받아 빌드한 뒤 전역으로 설치합니다.
+
+```bash
+git clone https://github.com/kms1212/OpenSpec.git && cd OpenSpec
+```
+
+```bash
+pnpm install && pnpm build && npm install -g .
+```
+
+설치된 schema가 포크인지는 아래 명령의 결과가 0보다 큰지로 확인합니다. 0이면 upstream이 깔린 것입니다.
+
+```bash
+grep -c 'qef:' "$(npm root -g)/@fission-ai/openspec/schemas/spec-driven/schema.yaml"
+```
+
+upstream의 변경을 받을 때는 포크 폴더에서 upstream을 머지하고 다시 빌드합니다. upstream 원격이 없으면 먼저 `git remote add upstream https://github.com/Fission-AI/OpenSpec.git`으로 더합니다.
+
+```bash
+git fetch upstream && git merge upstream/main && pnpm build
 ```
 
 ## 함께 쓰는 도구

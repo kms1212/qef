@@ -21,6 +21,7 @@ description: 새 저장소를 만들 때 호출한다.
 
 ## OpenSpec
 
+- 초기화하기 전에, 설치된 `openspec`이 OpenSpec 포크인지 `grep -c 'qef:' "$(npm root -g)/@fission-ai/openspec/schemas/spec-driven/schema.yaml"`로 확인한다. 포크와 upstream은 패키지 이름이 같아서, 결과가 0이면 upstream이 깔린 것이고 qef를 부르는 지시가 들어가지 않는다. 그때는 qef README의 「OpenSpec 포크」대로 포크를 설치한다.
 - `openspec init --tools claude`로 초기화한다. 에이전트용 skill과 command를 프로젝트 안에 만들었으면(`--scope project`) 그 파일은 커밋하지 않는다.
 
 ## 언어
