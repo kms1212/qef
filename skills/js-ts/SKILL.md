@@ -26,7 +26,7 @@ description: package.json이나 tsconfig.json이 있는 저장소에서 일하�
 
 | 일 | 도구 |
 |---|---|
-| 정의, 참조, 구현, 호출 관계, 타입 | Claude Code LSP 도구. code intelligence 플러그인과 언어 서버 바이너리가 있어야 켜진다 |
+| 정의, 참조, 구현, 호출 계층 구조, 타입 | Claude Code LSP 도구. code intelligence 플러그인과 언어 서버 바이너리가 있어야 켜진다 |
 
 LSP 도구는 읽기 전용이다. 이름 바꾸기는 아래 도구로 한다.
 
@@ -42,16 +42,16 @@ mcp-ts-morph의 한계는 README에 있다. 이 경우는 언어 서버로 참�
 
 - `export default Identifier;`의 참조 갱신, default export 심볼 이동
 - 스프레드 인자가 있는 호출의 시그니처 변경
-- 쓰지 않는 export 검증에서 동적 import와 파일 시스템 규약 라우팅
-- 빌드 산출물을 export하는 monorepo 패키지의 오탐
+- 쓰지 않는 export 검증에서 동적 import와 파일 시스템 기반 라우팅
+- 빌드 아티팩트를 export하는 monorepo 패키지의 오탐
 
-## 구조를 측정할 때
+## 정적 분석할 때
 
 | 잡는 것 | 도구 |
 |---|---|
 | 고아 파일 | dependency-cruiser |
 | 쓰지 않는 의존성, export, 파일 | Knip |
-| 복사한 코드 | jscpd |
+| 중복 코드 | jscpd |
 
 의존 방향, 금지 의존, 순환은 측정이 아니라 규칙이다. `qef:layout`의 「의존 규칙은 검사로 둔다」를 따른다.
 

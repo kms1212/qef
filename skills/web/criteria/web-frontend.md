@@ -20,7 +20,7 @@
 - 도메인 대상을 표시해 주는 컴포넌트는 서버 API의 그 객체를 받는다. 리렌더링을 줄이려고 메모이제이션하는 컴포넌트는 필요한 값만 받는다. 원시값만 받는 것은 기본 컴포넌트(버튼, 태그)이다.
 - 업데이트할 때는 바뀐 필드만 보낸다.
 - 쓰는 쪽이 필요한 만큼만 받는다. 다른 도메인의 정보는 그 루트 컬렉션의 Batch Get으로 모아 가져오고, 필요한 필드만 고른다(`criteria/web-api.md`).
-- 로딩 상태와 실패를 다루는 방식은 Suspense boundary와 Error Boundary마다 하나씩 둔다. 그 경계 안의 화면은 그 방식을 쓰고, 화면마다 따로 짜지 않는다. 로딩 표시는 실패해도 되돌린다. 실패를 어떻게 표시할지는 `qef:ux`의 「문구」를 따른다.
+- 로딩 상태와 실패를 다루는 방식은 Suspense boundary와 Error Boundary마다 하나씩 둔다. 그 경계 안의 화면은 그 방식을 쓰고, 화면마다 따로 짜지 않는다. 로딩 표시는 실패해도 되돌린다. 실패를 어떻게 표시할지는 `qef:ux`의 「사용자가 해석하고 기억할 일은 화면이 맡는다」를 따른다.
 
 근거: openapi-typescript (https://openapi-ts.dev/introduction); react.dev, "Choosing the State Structure" (https://react.dev/learn/choosing-the-state-structure); TanStack Query, "Does this replace client state?" (https://tanstack.com/query/latest/docs/framework/react/guides/does-this-replace-client-state); TkDodo, "Practical React Query" (https://tkdodo.eu/blog/practical-react-query); Google AIP-157 (https://google.aip.dev/157); react.dev, "Suspense" (https://react.dev/reference/react/Suspense); Next.js, "error.js" (https://nextjs.org/docs/app/api-reference/file-conventions/error); TkDodo, "React Query Data Transformations" (https://tkdodo.eu/blog/react-query-data-transformations); Relay, "Fragments" (https://relay.dev/docs/tutorial/fragments-1/); react.dev, "memo" (https://react.dev/reference/react/memo); Google AIP-126, "Enumerations" (https://google.aip.dev/126); FormatJS, "Message Syntax" (https://formatjs.github.io/docs/core-concepts/icu-syntax/); RFC 5789 (https://www.rfc-editor.org/rfc/rfc5789); Google AIP-134 (https://google.aip.dev/134); WCAG 2.2, "Understanding Status Messages" (https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html); RFC 9110 (https://www.rfc-editor.org/rfc/rfc9110); GOV.UK Design System, "Page not found pages" (https://design-system.service.gov.uk/patterns/page-not-found-pages/), "Problem with the service pages" (https://design-system.service.gov.uk/patterns/problem-with-the-service-pages/).
 
@@ -42,10 +42,10 @@
 |---|---|
 | 화면에서 직접 불러와 client state에 담기 | server state와 client state를 구분한다 |
 | 화면마다 따로 하는 로딩·오류 처리 | 로딩 상태·실패를 다루는 방식은 경계마다 하나 |
-| 인라인 스타일에 색 값을 직접 쓰기 | `qef:ui`의 「일관성」 |
+| 인라인 스타일에 색 값을 직접 쓰기 | `qef:ui`의 「같은 종류는 같은 모양과 같은 자리에 둔다」 |
 | 개념 이름 없는 `helpers/`, `shared/`, `common/` | 공통 위치 안에서도 개념 이름으로 |
 | 데이터를 쓰는 화면 전체를 브라우저에서 돌리기 | 브라우저에서만 할 수 있는 작업만 브라우저에서 |
-| 실패를 콘솔에만 찍거나 처리하지 않음 | `qef:ux`의 「문구」 |
+| 실패를 콘솔에만 찍거나 처리하지 않음 | `qef:ux`의 「사용자가 해석하고 기억할 일은 화면이 맡는다」 |
 | URL의 식별자를 화면마다 꺼내 바꾸기 | 꺼내 바꾸는 일은 한 곳에서 |
 | 인증 토큰을 화면마다 다시 읽기 | 전역은 앱 전체가 함께 쓰는 것만, 한 곳에 |
-| enum 원문을 그대로 화면에 내기 | `qef:ux`의 「문구」 |
+| enum 원문을 그대로 화면에 내기 | `qef:ux`의 「사용자가 해석하고 기억할 일은 화면이 맡는다」 |
