@@ -9,5 +9,8 @@
       "source": "./",
       "description": "Quod erat faciendum: 상황마다 불러 쓰는 판단 기준 skill 묶음."
     }
-  ]
+  ],
+  "metadata": {
+    "description": "에이전트가 코드, 문서, 화면을 다룰 때 따를 판단 기준을 상황별 skill로 묶은 Claude Code 플러그인 QEF를 배포합니다."
+  }
 }
