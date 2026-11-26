@@ -1,11 +1,23 @@
 ---
 name: sail
-description: .sail 파일이나 .sail_project 파일을 읽거나 쓰거나, Sail 모델을 검사하거나 다른 형식(C, SMT, 문서 등)으로 생성하기 전에 반드시 호출한다. 그때 쓰는 도구와 확인 방법을 담는다.
+description: .sail, .sail_project 파일을 다루거나 Sail 모델을 검사·생성하기 전에 반드시 호출한다.
 ---
 
 # sail
 
 아래는 후보다. 프로젝트에 이미 있는 것(빌드 스크립트, `.sail_project`, 생성기, 테스트)을 먼저 쓰고, 없는 것은 `qef:dev`의 「쓰기 전에 이미 있는 것을 찾는다」의 새 의존성 문단대로 하며, 옵션은 그때 설치된 Sail의 `sail --help`와 Sail 매뉴얼로 확인한다.
+
+## 들일 때
+
+저장소에 Sail 모델을 처음 들이면 아래를 처음부터 갖춘다.
+
+| 갖출 것 | 후보 |
+|---|---|
+| Sail 버전 고정 | 프로젝트의 opam 파일에 `sail`과 쓰는 백엔드 패키지의 버전 제약을 적는다 |
+| 파일과 모듈 순서 | `.sail_project` |
+| 타입 검사와 속성 검사 | `--just-check`와 `--smt --smt-auto`를 빌드나 테스트에 건다(「검사할 때」) |
+| 포매터 | 쓸지 정한다. 쓰면 `sail --fmt` |
+| 무시할 파일 | `sail_smt_cache`, 생성 결과 폴더. GitHub 템플릿에는 Sail이 없다 |
 
 ## 돌릴 때
 

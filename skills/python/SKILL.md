@@ -1,11 +1,26 @@
 ---
 name: python
-description: 저장소에 pyproject.toml, setup.py, requirements.txt가 있는 Python 프로젝트에서 코드를 읽거나 쓰거나 도구를 돌리기 전에 반드시 호출한다. 그때 쓰는 도구를 담는다.
+description: pyproject.toml, setup.py, requirements.txt가 있는 저장소에서 일하기 전에, 그리고 저장소에 Python을 들이기 전에 반드시 호출한다.
 ---
 
 # python
 
 아래는 후보다. 프로젝트에 이미 있는 것(`pyproject.toml`의 `[tool.*]` 설정과 개발 의존성)을 먼저 쓰고, 없는 것은 `qef:dev`의 「쓰기 전에 이미 있는 것을 찾는다」의 새 의존성 문단대로 하며, 설치 방법과 지금 상태는 그때 공식 문서로 확인한다. 스택이 구조를 정한 위치는 그 스택의 관례를 따른다.
+
+## 들일 때
+
+저장소에 Python을 처음 들이면 아래를 처음부터 갖춘다. 설정은 모두 `pyproject.toml`에 둔다.
+
+| 갖출 것 | 후보 |
+|---|---|
+| Python 버전과 의존성 고정 | `requires-python`, 실행기와 lockfile(uv와 `uv.lock` 등) |
+| 포매터와 lint | ruff |
+| 타입 검사 | pyright 계열(basedpyright, pyright). LSP와 결과가 어긋나지 않는다 |
+| 테스트 실행기 | pytest와 pytest-randomly(「테스트할 때」) |
+| 의존 규칙 검사 | import-linter(`qef:layout`의 「의존 규칙은 검사로 둔다」) |
+| 코드 찾기 | Claude Code `pyright-lsp` 플러그인과 pyright |
+| 커밋 훅 | lint와 format만 건다(`qef:testing`) |
+| 무시할 파일 | GitHub Python 템플릿(`qef:repo`의 「무시할 파일」), 가상 환경 폴더 |
 
 ## 돌릴 때
 

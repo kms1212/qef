@@ -1,11 +1,26 @@
 ---
 name: js-ts
-description: 저장소에 package.json이나 tsconfig.json이 있는 프로젝트에서 코드를 읽거나 쓰거나 도구를 돌리기 전에 반드시 호출한다. 그때 쓰는 도구를 담는다.
+description: package.json이나 tsconfig.json이 있는 저장소에서 일하기 전에, 그리고 저장소에 JS/TS를 들이기 전에 반드시 호출한다.
 ---
 
 # js-ts
 
 아래는 후보다. 프로젝트에 이미 있는 것을 먼저 쓰고, 없는 것은 `qef:dev`의 「쓰기 전에 이미 있는 것을 찾는다」의 새 의존성 문단대로 하며, 설치 방법과 지금 상태는 그때 공식 문서로 확인한다. 스택이 구조를 정한 위치는 그 스택의 관례를 따른다.
+
+## 들일 때
+
+저장소에 JS/TS를 처음 들이면 아래를 처음부터 갖춘다. 나중에 들이면 그동안 쓴 코드를 다시 맞춰야 한다.
+
+| 갖출 것 | 후보 |
+|---|---|
+| Node와 패키지 매니저 버전 고정 | `package.json`의 `engines`와 `packageManager`, lockfile |
+| 타입 검사 | `tsconfig.json`의 `strict` |
+| 포매터와 lint | Biome(포맷과 lint를 함께 맡는다), 또는 ESLint(typescript-eslint)와 Prettier |
+| 테스트 실행기 | 단위는 Vitest, 브라우저는 Playwright(「테스트할 때」) |
+| 의존 규칙 검사 | dependency-cruiser(`qef:layout`의 「의존 규칙은 검사로 둔다」) |
+| 코드 찾기 | Claude Code `typescript-lsp` 플러그인과 `typescript-language-server`, `typescript` |
+| 커밋 훅 | lint와 format만 건다(`qef:testing`) |
+| 무시할 파일 | GitHub Node 템플릿(`qef:repo`의 「무시할 파일」), 빌드 폴더 |
 
 ## 코드를 찾을 때
 
