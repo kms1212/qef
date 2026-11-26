@@ -1,6 +1,6 @@
 ---
 name: js-ts
-description: package.json이나 tsconfig.json이 있는 저장소에서 일하기 전에, 그리고 저장소에 JS/TS를 들이기 전에 반드시 호출한다.
+description: package.json이나 tsconfig.json이 있는 저장소에서 일하기 전에, 그리고 저장소에 JS/TS를 들이기 전에 호출한다.
 ---
 
 # js-ts

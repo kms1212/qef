@@ -1,6 +1,6 @@
 ---
 name: sail
-description: .sail, .sail_project 파일을 다루거나 Sail 모델을 검사·생성하기 전에 반드시 호출한다.
+description: .sail, .sail_project 파일을 다루거나 Sail 모델을 검사·생성하기 전에 호출한다.
 ---
 
 # sail

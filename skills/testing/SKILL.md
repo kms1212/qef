@@ -1,6 +1,6 @@
 ---
 name: testing
-description: 테스트를 쓰거나 고치기 전에, 그리고 테스트가 실패했을 때 반드시 호출한다.
+description: 테스트를 쓰거나 고치기 전에, 그리고 테스트가 실패했을 때 호출한다.
 ---
 
 # testing

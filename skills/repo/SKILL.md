@@ -1,6 +1,6 @@
 ---
 name: repo
-description: 새 저장소를 만들 때 반드시 호출한다.
+description: 새 저장소를 만들 때 호출한다.
 ---
 
 # repo

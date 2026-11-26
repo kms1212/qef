@@ -1,6 +1,6 @@
 ---
 name: python
-description: pyproject.toml, setup.py, requirements.txt가 있는 저장소에서 일하기 전에, 그리고 저장소에 Python을 들이기 전에 반드시 호출한다.
+description: pyproject.toml, setup.py, requirements.txt가 있는 저장소에서 일하기 전에, 그리고 저장소에 Python을 들이기 전에 호출한다.
 ---
 
 # python
