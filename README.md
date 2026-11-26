@@ -95,6 +95,10 @@ skills/
         └── licenses/       그 라이선스 원문
 ```
 
+## 라이선스
+
+QEF는 [Apache License 2.0](LICENSE)을 따릅니다. `references/` 아래 다른 저장소에서 옮긴 파일은 각자의 원래 라이선스를 따릅니다. 파일마다의 라이선스는 그 폴더의 `NOTICE.md`에 적었습니다.
+
 ## 출처
 
 판단 skill의 규칙마다 근거로 삼은 출처를 「근거」 줄에 적었습니다. `references/` 아래 일부 파일은 다른 저장소에서 옮긴 것입니다. 그 출처와 라이선스는 같은 폴더의 `NOTICE.md`와 `licenses/`에 있습니다.
