@@ -4,7 +4,7 @@ HTTP API를 내는 백엔드에서 경로와 도메인을 어떻게 나누고, �
 
 ## 경로와 도메인
 
-API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 리소스 규칙으로, 도메인은 공통 폐쇄 원칙으로 정하고, 둘은 루트 컬렉션에서만 만난다.
+API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 리소스 지향 설계 규칙으로, 도메인은 공통 폐쇄 원칙으로 정하고, 둘은 루트 컬렉션에서만 만난다.
 
 - 경로의 `/`는 "리소스가 자식을 가진다" 하나만 뜻한다. 첫 path segment는 루트 컬렉션이고, 자식은 그것이 무엇인지로 호출한다. 관계를 뜻하는 이름(`memberships`, `assignments`)이나 도메인을 묶는 path segment를 경로에 넣지 않는다.
 - 부모 없이 존재할 수 없는 리소스는 부모 경로 안에 둔다. 예: `/files/:fileId/versions/:versionId`. 그 밖의 관계는 아이디로만 가리킨다. 예: `/files?projectId=…`.
@@ -80,7 +80,7 @@ API 경로와 백엔드 구조는 서로 따라 하지 않는다. 경로는 리�
 - 리소스 단위 권한(소유자인가, 그 리소스에서 무슨 역할인가)은 비즈니스 로직 안에서 확인한다. 현재 사용자의 범위를 조회 조건에 넣어, 존재 확인과 권한 확인을 한 번에 한다.
 - 밖에 내는 식별자는 예측할 수 없는 값이다. 자동 증가 정수 기본키는 안에서만 쓴다.
 - 시각은 RFC 3339 UTC(`Z`) 문자열로 반환한다.
-- 쿼리와 JSON 필드 이름은 한 명명 규칙(camelCase 또는 snake_case)을 따르고, 필드 이름에 리소스 이름을 접두어로 붙이지 않는다.
+- 쿼리와 JSON 필드 이름은 한 명명 규칙(camelCase 또는 snake_case)을 따르고, 필드 이름에 리소스 이름을 접두사로 붙이지 않는다.
 
 근거: OWASP API1:2023 (https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization); OWASP, "Insecure Direct Object Reference Prevention Cheat Sheet" (https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html); Google AIP-148 `uid` (https://google.aip.dev/148); RFC 3339 (https://www.rfc-editor.org/rfc/rfc3339); Google AIP-142 (https://google.aip.dev/142); Google AIP-140 (https://google.aip.dev/140). 다른 점: Zalando는 꼭 필요하지 않으면 UUID를 피하라고 하지만, 여기서는 예측할 수 없는 식별자를 앞에 둔다. 명명 규칙은 Google·Microsoft가 camelCase, Zalando가 snake_case로 달라진다.
 

@@ -13,7 +13,7 @@ description: pyproject.toml, setup.py, requirements.txt가 있는 저장소에�
 
 | 갖출 것 | 후보 |
 |---|---|
-| Python 버전과 의존성 고정 | `requires-python`, 실행기와 lockfile(uv와 `uv.lock` 등) |
+| Python 버전과 의존성 고정 | `requires-python`, 패키지 매니저와 lockfile(uv와 `uv.lock` 등) |
 | 포매터와 lint | ruff |
 | 타입 검사 | pyright 계열(basedpyright, pyright). LSP와 결과가 어긋나지 않는다 |
 | 테스트 실행기 | pytest와 pytest-randomly(「테스트할 때」) |
@@ -24,14 +24,14 @@ description: pyproject.toml, setup.py, requirements.txt가 있는 저장소에�
 
 ## 돌릴 때
 
-- 프로젝트가 정한 실행기와 가상 환경(`uv run`, `poetry run`, `.venv/bin/python` 등)으로 돌린다. 시스템이나 다른 환경의 `python`으로 돌리면 다른 버전, 다른 의존성으로 돈다. `requires-python`을 맞춘다.
+- 프로젝트가 정한 패키지 매니저와 가상 환경(`uv run`, `poetry run`, `.venv/bin/python` 등)으로 돌린다. 시스템이나 다른 환경의 `python`으로 돌리면 다른 버전, 다른 의존성으로 돈다. `requires-python`을 맞춘다.
 - 도구 설정은 `pyproject.toml` 한 곳에 둔다. 같은 도구의 설정 파일을 따로 만들지 않는다.
 
 ## 코드를 찾을 때
 
 | 일 | 도구 |
 |---|---|
-| 정의, 참조, 구현, 호출 관계, 타입 | Claude Code LSP 도구. `pyright-lsp` 플러그인과 pyright 바이너리가 있어야 켜진다 |
+| 정의, 참조, 구현, 호출 계층 구조, 타입 | Claude Code LSP 도구. `pyright-lsp` 플러그인과 pyright 바이너리가 있어야 켜진다 |
 
 LSP 도구는 읽기 전용이다. 이름 바꾸기는 아래 도구로 한다.
 
@@ -57,13 +57,13 @@ Python은 이름을 문자열로도 가리키므로, 위 도구가 고치지 못
 | 정적 타입 검사 | 프로젝트가 쓰는 것(mypy, pyright, basedpyright). 새로 고를 때는 LSP와 같은 pyright 계열이 결과가 어긋나지 않는다 |
 | 외부 입력(YAML, JSON, 요청)을 경계에서 정확한 타입으로 바꾸기 | 프로젝트가 쓰는 모델 라이브러리(pydantic 등). 경계 한 곳에서 파싱하고 안에서는 다시 검증하지 않는다(`qef:dev`의 「강하게 잡을지는 틀렸을 때 어떻게 되는지로 정한다」) |
 
-## 구조를 측정할 때
+## 정적 분석할 때
 
 | 잡는 것 | 도구 |
 |---|---|
 | 쓰지 않거나 선언하지 않은 의존성, 다른 패키지를 통해서만 들어오는 의존성 | deptry |
 | 쓰이지 않는 함수·클래스·변수 | vulture. 동적으로 불리는 것은 오탐이 나니, 결과마다 실제로 안 쓰이는지 확인한다 |
-| 복사한 코드 | jscpd |
+| 중복 코드 | jscpd |
 
 의존 방향, 금지 의존, 순환은 측정이 아니라 규칙이다. `qef:layout`의 「의존 규칙은 검사로 둔다」를 따른다(Python은 import-linter). 측정한 결과는 판단의 입력이다. 도구가 잡지 못하는 개념과 타입 관계는 `qef:model`, `qef:layout`으로 본다.
 
