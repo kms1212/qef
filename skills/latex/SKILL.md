@@ -1,6 +1,6 @@
 ---
 name: latex
-description: .tex, .sty, .cls 파일을 다루거나 LaTeX 문서를 빌드하기 전에 반드시 호출한다.
+description: .tex, .sty, .cls 파일을 다루거나 LaTeX 문서를 빌드하기 전에 호출한다.
 ---
 
 # latex

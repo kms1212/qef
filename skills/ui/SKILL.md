@@ -1,6 +1,6 @@
 ---
 name: ui
-description: 사람이 쓰는 화면의 모양을 정하거나 리뷰하기 전에 qef:ux와 함께 반드시 호출한다.
+description: 사람이 쓰는 화면의 모양을 정하거나 리뷰하기 전에 qef:ux와 함께 호출한다.
 ---
 
 # ui
