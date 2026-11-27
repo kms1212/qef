@@ -42,7 +42,7 @@ QEF는 훅을 쓰지 않습니다. 설치하면 skill만 추가됩니다.
 | `qef:python` | `pyproject.toml`, `setup.py`, `requirements.txt`가 있는 저장소에서 일하기 전, Python을 들이기 전 | 실행 환경, 코드 찾기와 바꾸기, 타입, 정적 분석, 테스트 도구 |
 | `qef:latex` | `.tex`, `.sty`, `.cls` 파일을 다루거나 LaTeX 문서를 빌드하기 전 | 빌드, 찾기와 바꾸기, 검사, PDF 결과 비교, 표와 다이어그램 그리기 |
 | `qef:sail` | `.sail`, `.sail_project` 파일을 다루거나 Sail 모델을 검사·생성하기 전 | 실행, grep으로 찾기, 타입 검사와 property 검사, 포맷, 문서 백엔드 |
-| `qef:git` | 커밋, 스테이징, branch·worktree 만들기와 정리, merge·rebase, push를 하기 전 | 논리적 변경마다 나누는 커밋, 고치는 커밋을 먼저 내기, 파일 이름으로 하는 스테이징과 저장소에 넣을 파일 표, 커밋 메시지, 되살릴 수 없는 것을 버리지 않기, harness가 아는 worktree, 합친 결과 확인 |
+| `qef:git` | 커밋, 스테이징, branch·worktree 만들기와 정리, merge·rebase, push, CI 실행을 하기 전 | 논리적 변경마다 나누는 커밋, 고치는 커밋을 먼저 내기, 파일 이름으로 하는 스테이징과 저장소에 넣을 파일 표, 커밋 메시지, 되살릴 수 없는 것을 버리지 않기, harness가 아는 worktree, push 전 로컬 검사와 합친 결과 확인 |
 | `qef:repo` | 새 저장소를 만들 때 | git, 무시할 파일, OpenSpec 초기화, 언어별 준비 |
 
 ## 설치

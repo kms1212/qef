@@ -1,6 +1,6 @@
 ---
 name: git
-description: 커밋, 스테이징, branch·worktree 만들기와 정리, merge·rebase, push를 하기 전에 호출한다.
+description: 커밋, 스테이징, branch·worktree 만들기와 정리, merge·rebase, push, CI 실행을 하기 전에 호출한다.
 ---
 
 # git
@@ -90,16 +90,19 @@ description: 커밋, 스테이징, branch·worktree 만들기와 정리, merge·
 
 ## 합치고 올린 결과를 확인한다
 
-**의도.** 틀린 branch에 merge하면 되돌리기 비싸다. merge하기 전에 통과한 검사는 합친 결과가 통과한다는 근거가 아니다.
+**의도.** 틀린 branch에 merge하면 되돌리기 비싸다. merge하기 전에 통과한 검사는 합친 결과가 통과한다는 근거가 아니다. CI에서 처음 실패를 알게 되면 고칠 때마다 CI 한 번을 기다려야 한다.
 
 **규칙**
 - push, merge, 태그, PR은 사용자의 규칙과 프로젝트 규칙이 정한 때 한다.
 - merge하기 전에 대상 branch를 확인한다. 일이 갈라져 나온 branch는 계획, 대화, branch의 upstream에 있다.
 - merge 방식(merge commit, rebase, squash)은 프로젝트의 지난 기록과 규칙을 따른다. 이미 push한 branch는 rebase하지 않는다.
 - 합친 결과에서 검사를 다시 돌리고(`qef:testing`), 실패하면 push하지 않고 원인을 찾는다.
-- push한 뒤에는 CI 결과를 읽는다(`qef:command`). CI에서 처음 실패를 알게 되지 않게, CI가 돌릴 검사는 push하기 전에 로컬에서 돌린다(`qef:testing`).
+- push하거나 CI를 돌리기 전에, CI가 돌릴 검사를 로컬에서 돌린다. 그 검사가 무엇인지는 CI 설정 파일의 step에서 읽는다.
+- CI 설정을 바꿨으면, 바꾼 job을 그 job과 같은 환경(같은 container image, 같은 런타임 버전, 같은 실행 사용자)에서 로컬로 돌린다. job의 image를 `docker run`으로 띄워 그 step을 돌리거나, 프로젝트에 있으면 `act` 같은 도구를 쓴다. CI 설정을 바꾼 것은 CI로만 확인할 수 있다고 넘기지 않는다. 로컬에서 재현할 수 없는 것(runner가 주는 서비스, 시크릿, 권한)만 CI로 확인하고, 무엇을 왜 넘겼는지 적는다.
+- push한 뒤에는 CI 결과를 읽는다(`qef:command`).
 
 **확인할 것**
+- [ ] push하기 전에 CI가 돌릴 검사를 로컬에서 돌렸고, CI 설정을 바꿨으면 그 job을 같은 환경에서 돌렸다.
 - [ ] 합친 결과에서 검사를 돌렸고, push한 뒤 CI 결과를 읽었다.
 
 근거: obra/superpowers, "finishing-a-development-branch"(「Confirm before merging: merging into the wrong base is expensive to undo.」) (https://github.com/obra/superpowers/blob/main/skills/finishing-a-development-branch/SKILL.md).
