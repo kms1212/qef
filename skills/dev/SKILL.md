@@ -161,16 +161,16 @@ description: 코드를 읽거나 쓰기 전에 호출한다.
 
 근거: OWASP, "OWASP Top 10:2025" (https://top10.owasp.org/2025/).
 
-## 설계를 승인받는 일은 OpenSpec change 안에서 한다
+## OpenSpec이 있는 저장소의 변경은 change 안에서 한다
 
-**의도.** change 없이 설계하고 구현하면 승인받은 설계와 그 근거가 남지 않는다. OpenSpec 포크의 schema가 단계마다 부르는 qef skill과 Done When 대조도 빠진다.
+**의도.** change 없이 바꾸면 무엇을 왜 바꿨는지와 승인받은 설계가 남지 않는다. OpenSpec 포크의 schema가 단계마다 부르는 qef skill과 Done When 대조도 빠진다.
 
 **규칙**
-- 저장소에 `openspec/`이 있으면, 설계를 정해 승인받고 구현하는 일은 OpenSpec change를 만들고(`openspec-propose`) 그 안에서 한다. 그 일이 속한 change가 이미 있으면 그 change에서 한다.
+- 저장소에 `openspec/`이 있으면, 그 저장소를 바꾸는 일은 모두 OpenSpec change를 만들고(`openspec-propose`) 그 안에서 한다. 그 일이 속한 change가 이미 있으면 그 change에서 한다.
 - change를 어느 세션이 만드는지는 세션의 종류로 정한다(`qef:delegate` 「세션의 종류와 역할」).
 
 **확인할 것**
-- [ ] 설계를 승인받은 일마다 그 일의 change가 있다.
+- [ ] 바꾼 일마다 그 일이 속한 change가 있다.
 
 ## 보고
 
