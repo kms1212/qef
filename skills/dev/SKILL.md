@@ -135,20 +135,31 @@ description: 코드를 읽거나 쓰기 전에 호출한다.
 - [ ] 고친 결함마다 원인이 생긴 계층과, 같은 원인의 다른 곳을 찾은 결과가 적혀 있다.
 - [ ] 이번 수정이 새 예외 경로를 만들지 않았다.
 
-## 외부 입력이 닿는 곳에 보안 결함을 만들지 않는다
+## 보안 결함을 만들지 않는다
 
-**의도.** 외부 입력이 명령, 질의, 화면, 경로에 그대로 닿으면 기능이 동작해도 공격 경로가 된다. 검증을 안쪽 코드마다 덧붙이면 코드만 무거워지고, 정작 입력이 들어오는 경계는 비어 있기 쉽다.
+**의도.** 기능이 동작해도 보안 결함이 있으면 공격 경로가 된다. 결함의 종류를 몇 가지 예시로만 떠올리면 그 밖의 종류(접근 제어, 인증, 설정)는 보지 않게 된다. 검증을 안쪽 코드마다 덧붙이면 코드만 무거워지고, 정작 입력이 들어오는 경계는 비어 있기 쉽다.
 
 **규칙**
+- 코드를 쓰거나 고칠 때 OWASP Top 10의 범주에 드는 취약점을 만들지 않는다. 쓴 코드에서 찾으면 그 자리에서 고친다. 지금 판(2025)의 범주는 아래 열 가지이고, 새 판이 나오면 그 판을 따른다.
+  - A01 Broken Access Control
+  - A02 Security Misconfiguration
+  - A03 Software Supply Chain Failures
+  - A04 Cryptographic Failures
+  - A05 Injection
+  - A06 Insecure Design
+  - A07 Authentication Failures
+  - A08 Software or Data Integrity Failures
+  - A09 Security Logging and Alerting Failures
+  - A10 Mishandling of Exceptional Conditions
 - 외부 입력(사용자 입력, 요청, 파일, 외부 API 응답)이 셸 명령, SQL, HTML, 파일 경로에 닿으면 그 형식의 안전한 방법으로 넘긴다. 인자 배열, 매개변수화한 질의, 이스케이프하는 템플릿, 정규화한 뒤 허용 범위를 확인한 경로가 그런 방법이다. 문자열을 이어 붙여 만들지 않는다.
 - 검증은 외부 입력이 들어오는 경계에서 한다. 안쪽 코드끼리는 서로가 보장한 것을 믿는다.
 - 비밀값을 코드, 로그, 오류 메시지, 커밋에 두지 않는다.
-- 쓴 코드에서 command injection, XSS, SQL injection 같은 취약점을 찾으면 그 자리에서 고친다.
 
 **확인할 것**
+- [ ] 바꾼 코드를 OWASP Top 10의 범주마다 대 봤고, 해당하는 결함이 없다.
 - [ ] 외부 입력이 닿는 명령·질의·화면·경로마다 그 형식의 안전한 방법으로 넘어간다.
 
-근거: OWASP, "OWASP Top 10" (https://owasp.org/Top10/).
+근거: OWASP, "OWASP Top 10:2025" (https://top10.owasp.org/2025/).
 
 ## 설계를 승인받는 일은 OpenSpec change 안에서 한다
 
